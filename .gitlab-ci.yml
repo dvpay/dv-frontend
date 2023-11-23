@@ -1,0 +1,63 @@
+variables:
+  CI_ROOT_PATH: /home/server/frontend
+  CI_BUILD_PATH: $CI_ROOT_PATH/builds
+  CI_PROD_ROOT_PATH: /home/server/frontend_new
+  CI_PROD_BUILD_PATH: $CI_PROD_ROOT_PATH/builds
+
+stages:
+  - stage
+  - production
+
+deploy production:
+  cache:
+    - key:
+        files:
+          - package-lock.json
+      paths:
+        - node_modules/
+  tags:
+    - frontend
+    - prod
+  stage: production
+  before_script:
+    - export DATE=`date '+%Y-%m-%d-%H-%M'`
+    - export BUILD_DIR=$CI_PROD_BUILD_PATH/$DATE-$CI_COMMIT_SHA
+  script:
+    - if [ ! -f $CI_PROD_ROOT_PATH/.env ]; then echo exit 1; fi
+    - cp $CI_PROD_ROOT_PATH/.env $CI_PROJECT_DIR/.env
+    - npm install
+    - npm run build
+    - cp -r $CI_PROJECT_DIR $BUILD_DIR
+    - rm -rf $BUILD_DIR/.git
+    - rm -f $CI_PROD_ROOT_PATH/www
+    - ln -s $BUILD_DIR $CI_PROD_ROOT_PATH/www
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: 'manual'
+
+
+deploy_stage:
+  cache:
+    - key:
+        files:
+          - package-lock.json
+      paths:
+        - node_modules/
+  tags:
+    - backend_new
+    - stage
+  stage: stage
+  before_script:
+    - export DATE=`date '+%Y-%m-%d-%H-%M'`
+    - export BUILD_DIR=$CI_BUILD_PATH/$DATE-$CI_COMMIT_SHA
+  script:
+    - if [ ! -f $CI_ROOT_PATH/.env ]; then echo exit 1; fi
+    - cp $CI_ROOT_PATH/.env $CI_PROJECT_DIR/.env
+    - npm install
+    - npm run build
+    - cp -r $CI_PROJECT_DIR $BUILD_DIR
+    - rm -rf $BUILD_DIR/.git
+    - rm -f $CI_ROOT_PATH/www
+    - ln -s $BUILD_DIR $CI_ROOT_PATH/www
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "dev"'

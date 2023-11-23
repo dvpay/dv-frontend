@@ -1,0 +1,27 @@
+.Vue-Toastification__toast--default.toast__class {
+  @apply bg-toast-default;
+}
+
+.Vue-Toastification__toast--info.toast__class {
+  @apply bg-toast-info;
+}
+
+.Vue-Toastification__toast--success.toast__class {
+  @apply bg-toast-success;
+}
+
+.Vue-Toastification__toast--error.toast__class {
+  @apply bg-toast-error;
+}
+
+.Vue-Toastification__toast--warning.toast__class {
+  @apply bg-toast-warning;
+}
+
+.Vue-Toastification__toast-body.toast__class-body {
+  /* Applied to the toast body when using regular strings as content */
+}
+
+.Vue-Toastification__toast-component-body.toast__class-component-body {
+  /* Applied to a wrapper div when using a custom component as content */
+}

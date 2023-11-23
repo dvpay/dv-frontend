@@ -1,0 +1,86 @@
+$phone: 320px;
+$phone-lg: 480px;
+$tablet: 768px;
+$laptop: 1024px;
+$laptop-lg: 1180px;
+$desktop-sm: 1380px;
+$desktop: 1440px;
+$desktop-lg: 1600px;
+
+@mixin phone {
+  @media screen and (max-width: #{$phone}) {
+    @content;
+  }
+}
+
+@mixin phone-lg {
+  @media screen and (max-width: #{$phone-lg}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media screen and (max-width: #{$tablet}) {
+    @content;
+  }
+}
+
+@mixin laptop {
+  @media screen and (max-width: #{$laptop}) {
+    @content;
+  }
+}
+
+@mixin laptop-lg {
+  @media screen and (max-width: #{$laptop-lg}) {
+    @content;
+  }
+}
+
+@mixin desktop-sm {
+  @media screen and (max-width: #{$desktop-sm}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media screen and (max-width: #{$desktop}) {
+    @content;
+  }
+}
+
+@mixin desktop-lg {
+  @media screen and (max-width: #{$desktop-lg}) {
+    @content;
+  }
+}
+
+@mixin between($from, $to) {
+  @media screen and (min-width: #{$from}) and (max-width: #{$to - 1px}) {
+    @content;
+  }
+}
+
+@mixin phone-only {
+  @include between($phone, $phone-lg) {
+    @content;
+  }
+}
+
+@mixin phone-lg-only {
+  @include between($phone-lg, $tablet) {
+    @content;
+  }
+}
+
+@mixin tablet-only {
+  @include between($tablet, $laptop) {
+    @content;
+  }
+}
+
+@mixin laptop-only {
+  @include between($laptop, $laptop-lg) {
+    @content;
+  }
+}
