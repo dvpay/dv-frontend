@@ -28,7 +28,7 @@ This repository is the frontend of DV Pay cryptocurrency payment service and is 
 ## 🚀 Getting Started
 
 1. Open terminal
-2. Clone the repo: `git clone git@github.com:DvPayFrontend/DvPayFrontend.git`
+2. Clone the repo: `git clone git@github.com:dvpay/dv-frontend.git`
 3. run `npm i` to install node packages.
 4. Make a copy of `.env.example` named `.env` and specify your variables.
 5. run `npm run build`
@@ -38,7 +38,7 @@ This repository is the frontend of DV Pay cryptocurrency payment service and is 
 ## 🧑‍💻 Developers
 
 1. Open terminal
-2. Clone the repo: `git clone git@github.com:DvPayFrontend/DvPayFrontend.git`
+2. Clone the repo: `git clone git@github.com:dvpay/dv-frontend.git`
 3. run `git checkout dev`
 4. run `npm i` to install node packages.
 5. Make a copy of `.env.example` named `.env` and specify your variables.
