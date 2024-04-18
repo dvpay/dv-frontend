@@ -15,11 +15,17 @@ export default class WithdrawalWalletService {
     return api.put(`/withdrawal-wallet/${wallet}`, payload, token);
   }
 
-  public static async createWithdrawal(payload: object, token: Token): Promise<AxiosBaseResponse<void>>  {
-    return api.post(`/withdrawal-wallet/withdrawal`, payload, token);
+  public static async updateWithdrawalWalletRules(wallet: string, payload: object, token: Token): Promise<AxiosBaseResponse<WithdrawalWallerResponse>> {
+    return api.put(`/withdrawal-wallet/${wallet}/withdrawal-rules`, payload, token);
+  }
+
+  public static async createWithdrawal(payload: object, token: Token): Promise<AxiosBaseResponse<void>> {
+    return api.post('/withdrawal-wallet/withdrawal', payload, token);
   }
 
   public static async createWithdrawalFromAddress(payload: object, token: Token): Promise<AxiosBaseResponse<void>> {
     return api.post('/withdrawal-wallet/withdrawal-from-address', payload, token);
   }
+
+
 }

@@ -21,6 +21,7 @@ export interface StoreResponse {
   acceptPaymentAtActualRate: boolean;
   status: number;
   staticAddresses: number;
+  minimalPayment: number;
 }
 
 export interface UpdateStoreRequest {
@@ -29,6 +30,7 @@ export interface UpdateStoreRequest {
   currency: string;
   invoiceExpirationTime: null | number;
   rateSource?: string;
+  minimalPayment: number;
 }
 
 export interface UpdateRateSourceRequest {

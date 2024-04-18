@@ -6,7 +6,7 @@ import AddressesService from '@/services/AddressesService';
 import {
   AddressBalancesResponse,
   InvoicesByAddressResponse,
-  DataByAddressResponse, StatsHotWalletResponse,
+  DataByAddressResponse, StatsHotWalletResponse, SummaryHotWalletResponse,
 } from '@/services/AddressesService/types';
 import { decimal, formatDate, shortName, numberFormatter } from '@/utils';
 
@@ -21,6 +21,7 @@ interface AddressesState {
   addressInvoicesPagination: Partial<PaginationResponse>;
   addressData: Partial<DataByAddressResponse>;
   addressStats: Partial<StatsHotWalletResponse>;
+  hotWalletsSummary: Partial<SummaryHotWalletResponse>;
 }
 
 const state: AddressesState = {
@@ -32,6 +33,7 @@ const state: AddressesState = {
   addressInvoicesPagination: {},
   addressData: {},
   addressStats: {},
+  hotWalletsSummary: {},
 };
 
 const getters: GetterTree<AddressesState, RootState> = {
@@ -86,6 +88,10 @@ const mutations: MutationTree<AddressesState> = {
 
   setAddressStats(state, value) {
     state.addressStats = value;
+  },
+
+  setHotWalletsSummary(state, value) {
+    state.hotWalletsSummary = value;
   },
 
   setAddressBalancesPagination(state, value: PaginationResponse) {
@@ -203,6 +209,19 @@ const actions: ActionTree<AddressesState, RootState> = {
       );
       const { result } = data;
       context.commit('setAddressStats', result);
+    } catch (e) {
+      toast.error(e.message);
+      throw e;
+    }
+  },
+
+  async loadHotWalletsSummary(context) {
+    try {
+      const { data } = await AddressesService.getSummaryHotWallets(
+        context.rootGetters['auth/accessToken'],
+      );
+      const { result } = data;
+      context.commit('setHotWalletsSummary', result);
     } catch (e) {
       toast.error(e.message);
       throw e;

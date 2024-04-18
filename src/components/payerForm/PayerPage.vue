@@ -1,11 +1,9 @@
 <template>
-  <div
-    class="pages relative min-h-560px"
-  >
+  <div class="pages relative">
     <choose-cryptocurrency v-if="step === 1" />
-    <select-network v-if="step === 2" />
-    <invoice-data v-if="step === 3" />
-
+    <invoice-data v-if="step === 2" />
+    <invoice-confirmation v-if="step === 3" />
+    <invoice-success v-if="step === 4" />
     <div
       v-if="!payer.store.staticAddress"
       class="absolute w-full h-full bottom-0 left-0 bg-s-gray rounded-20px"
@@ -14,6 +12,7 @@
         {{ $t('Static Addresses Disabled') }}
       </div>
     </div>
+    <!-- <div class="h-60px min-h-60px w-full" /> -->
   </div>
 </template>
 
@@ -21,14 +20,16 @@
 import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
 import ChooseCryptocurrency from '@/components/payerForm/steps/ChooseCryptocurrency.vue';
-import SelectNetwork from '@/components/payerForm/steps/SelectNetwork.vue';
 import InvoiceData from '@/components/payerForm/steps/InvoiceData.vue';
+import InvoiceConfirmation from '@/components/payerForm/steps/InvoiceConfirmation.vue';
+import InvoiceSuccess from '@/components/payerForm/steps/InvoiceSuccess.vue';
 
 export default defineComponent({
   components: {
-    ChooseCryptocurrency,
-    SelectNetwork,
+    InvoiceSuccess,
+    InvoiceConfirmation,
     InvoiceData,
+    ChooseCryptocurrency,
   },
 
   computed: {
@@ -42,7 +43,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .pages {
-  @apply p-20px bg-s-gray;
-  @apply border-2 border-x-gray rounded-20px;
+  @apply flex flex-col flex-grow p-18px lg:p-24px rounded-16px border-1 border-secondary-100;
+  background: linear-gradient(90deg, rgba(52, 74, 119, 0.1) 0%, rgba(52, 74, 119, 0.05) 50%, rgba(52, 74, 119, 0.1) 100%);
 }
 </style>

@@ -18,7 +18,12 @@ export interface ProcessingWalletTransferResponse {
 }
 
 export interface ProcessingWalletStatsResponse {
-  avgTransfer: number,
+  transferCount: number,
   avgBandwidth: number,
   avgEnergy: number,
+}
+
+export interface UpdateProcessingTransferTypeRequest {
+  blockchain: string,
+  type: string,
 }

@@ -7,7 +7,7 @@ import {
   UserExchangeDirectionsRequest,
   UserExchangeDirectionsResponse,
   UpdateExchangeSettingsPayload,
-  UserExchangeDirectionsBatchRequest,
+  UserExchangeDirectionsBatchRequest, ExchangeWithdrawalHistoryResponse,
 } from './types';
 
 export default class ExchangesService {
@@ -57,7 +57,6 @@ export default class ExchangesService {
     return api.get('/exchanges/symbols-exchange', params, token);
   }
 
-
   public static async getUserExchangeDirections(
     params: Pick<UserExchangesRequest, 'exchange'>,
     token: Token,
@@ -91,28 +90,43 @@ export default class ExchangesService {
     params: Pick<UserExchangesRequest, 'exchange'>,
     token: Token,
   ): Promise<AxiosBaseResponse<any>> {
-    return api.get('/exchanges/withdrawal/cold-wallets', params, token)
+    return api.get('/exchanges/withdrawal/cold-wallets', params, token);
   }
 
   public static async createColdWallets(
-    payload: Object,
-    token: Token
+    payload: object,
+    token: Token,
   ): Promise<AxiosBaseResponse<any>> {
-    return api.post('/exchanges/withdrawal/cold-wallets', payload, token)
+    return api.post('/exchanges/withdrawal/cold-wallets', payload, token);
   }
 
   public static async deleteColdWallets(
-    walletId: Number,
-    payload: Object,
+    walletId: number,
+    payload: object,
     token: Token,
   ): Promise<AxiosBaseResponse<void>> {
     return api.delete(`/exchanges/withdrawal/${walletId}/cold-wallets`, payload, token);
   }
 
   public static async changeStatus(
-    payload: Object,
+    payload: object,
     token: Token,
   ): Promise<AxiosBaseResponse<void>> {
-    return api.put(`/exchanges/withdrawal/status`, payload, token);
+    return api.put('/exchanges/withdrawal/status', payload, token);
+  }
+
+  public static async getWithdrawalFromExchange(
+    payload: Record<string, string | string[]>,
+    token: Token,
+  ): Promise<AxiosBaseResponse<ExchangeWithdrawalHistoryResponse>> {
+    return api.get('/exchanges/withdrawal/history', payload, token);
+  }
+
+  public static async updateStatusExchange(
+    payload: object,
+    token: Token,
+  ): Promise<AxiosBaseResponse<void>>
+  {
+    return api.post('/exchanges/withdrawal/exchange-status', payload, token);
   }
 }

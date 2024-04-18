@@ -19,7 +19,17 @@ const designColors = {
   's-gray': 'var(--s-gray)',
   'x-gray': 'var(--x-gray)',
 
+  blue: {
+    10: 'var(--blue-10)',
+    20: 'var(--blue-20)',
+    50: 'var(--blue-50)',
+    100: 'var(--blue-100)',
+    200: 'var(--blue-200)',
+    300: 'var(--blue-300)',
+    400: 'var(--blue-400)',
+  },
   gray: {
+    50: 'var(--gray-50)',
     100: 'var(--gray-100)',
     200: 'var(--gray-200)',
     300: 'var(--gray-300)',
@@ -34,8 +44,12 @@ const designColors = {
     600: 'var(--primary-600)',
   },
   secondary: {
+    100: 'var(--secondary-100)',
     500: 'var(--secondary-500)',
     600: 'var(--secondary-600)',
+    700: 'var(--secondary-700)',
+    800: 'var(--secondary-800)',
+    900: 'var(--secondary-900)',
   },
   danger: {
     100: 'var(--danger-100)',
@@ -47,9 +61,11 @@ const designColors = {
   success: {
     100: 'var(--success-100)',
     200: 'var(--success-200)',
+    250: 'var(--success-250)',
     300: 'var(--success-300)',
     400: 'var(--success-400)',
     500: 'var(--success-500)',
+    600: 'var(--success-600)',
   },
   warning: {
     100: 'var(--warning-100)',
@@ -68,6 +84,8 @@ export default defineConfig({
     },
     extend: {
       screens: {
+        'h-sm': { 'raw': '(max-height: 849px) and (min-width: 1024px)' },
+        'h-md': { 'raw': '(max-height: 1023px) and (min-width: 1024px)' },
         'phone': '320px',
         'phone-lg': '480px',
         'tablet': '768px',

@@ -3,7 +3,6 @@ export interface AddressBalancesResponse {
   currency: string;
   address: string;
   blockchain: string;
-  state: string;
   createdAt: string;
   updatedTt: string;
   transactionsPaymentSumAmount: string | null;
@@ -51,4 +50,12 @@ export interface DataByAddressResponse {
 export interface StatsHotWalletResponse {
   addressCount: number,
   amountUsd: number,
+}
+
+export interface SummaryHotWalletResponse {
+  currencyId: string,
+  sumAmount: number,
+  sumAmountUsd: number,
+  countWithBalance: number,
+  createdCount: number,
 }

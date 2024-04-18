@@ -1,43 +1,43 @@
 <template>
   <aside>
     <div
-      class="sidebar"
-      :class="{'sidebar-show': isShowSidebar}"
+        class="sidebar"
+        :class="{'sidebar-show': isShowSidebar}"
     >
       <div
-        class="sidebar-nav-menu"
+          class="sidebar-nav-menu"
       >
         <div
-          class="sidebar-header"
-          :class="{
+            class="sidebar-header"
+            :class="{
             'sidebar-full-width': !isSidebarPartial,
             'sidebar-partial-width sidebar-header-partial-width': isSidebarPartial,
           }"
         >
           <logo-nav
-            class="sidebar-logo"
+              class="sidebar-logo"
           />
           <i-burger-menu
-            v-if="!isShowSidebar"
-            :toggle="isSidebarPartial"
-            @click="collapseSidebarPartialHandler"
+              v-if="!isShowSidebar"
+              :toggle="isSidebarPartial"
+              @click="collapseSidebarPartialHandler"
           />
           <i-burger-menu
-            v-if="isShowSidebar"
-            :toggle="isShowSidebar"
-            @click="closeSidebarHandler"
+              v-if="isShowSidebar"
+              :toggle="isShowSidebar"
+              @click="closeSidebarHandler"
           />
         </div>
 
         <div
-          class="sidebar-body-wrapper"
-          :class="{
+            class="sidebar-body-wrapper"
+            :class="{
             'sidebar-full-width': !isSidebarPartial,
             'sidebar-partial-width': isSidebarPartial,
           }"
         >
           <nav
-            class="sidebar-body"
+              class="sidebar-body"
           >
             <div v-if="showMainMenu">
               <div class="nav-category">
@@ -45,73 +45,15 @@
               </div>
 
               <router-link
-                class="sidelink"
-                :to="{ name: 'dashboard' }"
-                @click="closeSidebarHandler"
+                  class="sidelink"
+                  :to="{ name: 'dashboard' }"
+                  @click="closeSidebarHandler"
               >
                 <span class="flex">
-                  <feather-icon type="box" size="18" />
+                  <feather-icon type="box" size="18"/>
                 </span>
                 <span class="sidebar-link-title">
                   {{ $t('Dashboard') }}
-                </span>
-              </router-link>
-
-              <router-link
-                class="sidelink"
-                :to="{ name: 'stores' }"
-                :class="{'router-link-active': storeSettingsLinkActive }"
-                @click="closeSidebarHandler"
-              >
-                <span class="flex">
-                  <feather-icon type="shopping-bag" size="18" />
-                </span>
-                <span class="sidebar-link-title">
-                  {{ $t('Your Projects') }}
-                </span>
-              </router-link>
-
-              <router-link
-                class="sidelink"
-                :to="{ name: 'balances' }"
-                :class="{'router-link-active': balancesLinkActive}"
-                @click="closeSidebarHandler"
-              >
-                <span class="flex">
-                  <feather-icon type="dollar-sign" size="18"/>
-                </span>
-                <span class="sidebar-link-title">
-                  {{ $t('Hot Wallets') }}
-                </span>
-              </router-link>
-
-
-
-              <router-link
-                class="sidelink"
-                :to="{ name: 'withdrawal' }"
-                :class="{'router-link-active': withdrawalRulesLinkActive}"
-                @click="closeSidebarHandler"
-              >
-                <span class="flex">
-                  <feather-icon type="sliders" size="18"/>
-                </span>
-                <span class="sidebar-link-title">
-                  {{ $t('Withdrawal Rules') }} 2.0
-                </span>
-              </router-link>
-
-
-              <router-link
-                class="sidelink"
-                :to="{ name: 'support-search-tx' }"
-                @click="closeSidebarHandler"
-              >
-                <span class="flex">
-                  <feather-icon type="search" size="18"/>
-                </span>
-                <span class="sidebar-link-title">
-                  {{ $t('Search Transactions') }}
                 </span>
               </router-link>
 
@@ -128,31 +70,41 @@
                 </span>
               </router-link>
 
-              <div class="nav-category mt-4">
-                {{ $t('Misc') }}
-              </div>
+              <router-link
+                  class="sidelink"
+                  :to="{ name: 'balances' }"
+                  :class="{'router-link-active': balancesLinkActive}"
+                  @click="closeSidebarHandler"
+              >
+                <span class="flex">
+                  <feather-icon type="dollar-sign" size="18"/>
+                </span>
+                <span class="sidebar-link-title">
+                  {{ $t('Hot Wallets') }}
+                </span>
+              </router-link>
 
               <div
                 aria-hidden="true"
                 class="sidelink-expand"
-                :class="{'router-link-active': historyAndLogs || invoicesLinkActive}"
-                @click="expand($event, 'history_and_logs')"
+                :class="{'router-link-active': invoicesLinkActive ||  supportSearchTxLinkActive}"
+                @click="expand($event, 'search_transactions')"
               >
                 <div class="flex items-center gap-4">
-                  <feather-icon type="monitor" size="18"/>
+                  <feather-icon type="search" size="18"/>
                   <span class="sidelink-expand-title">
-                    {{ $t('History & Logs') }}
+                    {{ $t('Search Transactions') }}
                   </span>
                 </div>
                 <feather-icon
                   type="chevron-down"
                   size="14"
                   class="sidelink-expand-angle"
-                  :class="{'rotate': fieldCollapsed('history_and_logs') }"
+                  :class="{'rotate': fieldCollapsed('search_transactions') }"
                 />
               </div>
 
-              <ui-expand :is-expanded="fieldCollapsed('history_and_logs')">
+              <ui-expand :is-expanded="fieldCollapsed('search_transactions')">
                 <ul class="nav-expand">
                   <li class="nav-expand-item">
                     <router-link
@@ -169,47 +121,158 @@
                   <li class="nav-expand-item">
                     <router-link
                       class="sidelink-expand-link"
-                      :to="{ name: 'withdrawals' }"
-                      :class="{'router-link-active': withdrawalsLinkActive}"
+                      :class="{'router-link-active': supportSearchTxLinkActive }"
+                      :to="{ name: 'support-search-tx' }"
                       @click="closeSidebarHandler"
                     >
                     <span class="sidelink-expand-link-title">
-                      {{ $t('Withdrawals History') }}
-                    </span>
-                    </router-link>
-                  </li>
-                  <li class="nav-expand-item">
-                    <router-link
-                      class="sidelink-expand-link"
-                      :class="{'router-link-active': monitoringLinkActive }"
-                      :to="{ name: 'monitoring' }"
-                      @click="closeSidebarHandler"
-                    >
-                    <span class="sidelink-expand-link-title">
-                      {{ $t('Monitoring') }}
+                      {{ $t('Search Transactions') }}
                     </span>
                     </router-link>
                   </li>
                 </ul>
               </ui-expand>
 
+              <router-link
+                class="sidelink"
+                :to="{ name: 'exchange-cold-history' }"
+                :class="{'router-link-active': exchangeWithdrawalLinkActive}"
+                @click="closeSidebarHandler"
+              >
+                <span class="flex">
+                  <feather-icon type="trending-up" size="18"/>
+                </span>
+                <span class="sidebar-link-title">
+                  {{ $t('Transfer from exchange') }}
+                </span>
+              </router-link>
+
+              <div class="nav-category mt-4">
+                {{ $t('Settings') }}
+              </div>
+
+              <router-link
+                class="sidelink"
+                :to="{ name: 'stores' }"
+                :class="{'router-link-active': storeSettingsLinkActive }"
+                @click="closeSidebarHandler"
+              >
+                <span class="flex">
+                  <feather-icon type="shopping-bag" size="18"/>
+                </span>
+                <span class="sidebar-link-title">
+                  {{ $t('Your Projects') }}
+                </span>
+              </router-link>
+
+              <router-link
+                class="sidelink"
+                :to="{ name: 'withdrawal' }"
+                :class="{'router-link-active': withdrawalRulesLinkActive}"
+                @click="closeSidebarHandler"
+              >
+                <span class="flex">
+                  <feather-icon type="sliders" size="18"/>
+                </span>
+                <span class="sidebar-link-title">
+                  {{ $t('Withdrawal Rules') }}
+                </span>
+              </router-link>
+
+              <router-link
+                class="sidelink"
+                :to="{ name: 'rates-and-fees' }"
+                :class="{'router-link-active': ratesAndFeesLinkActive}"
+                @click="closeSidebarHandler"
+              >
+                <span class="flex">
+                  <feather-icon type="bar-chart-2" size="18"/>
+                </span>
+                <span class="sidebar-link-title">
+                  {{ $t('Rates & Fees') }}
+                </span>
+              </router-link>
+
+              <div v-if="showSupportMenu">
+                <div class="nav-category mt-4">
+                  {{ $t('Support') }}
+                </div>
+
+                <router-link
+                  class="sidelink"
+                  :class="{'router-link-active': monitoringLinkActive }"
+                  :to="{ name: 'monitoring' }"
+                  @click="closeSidebarHandler"
+                >
+                  <span class="flex">
+                    <feather-icon type="activity" size="18"/>
+                  </span>
+                  <span class="sidebar-link-title">
+                    {{ $t('Logs and status') }}
+                  </span>
+                </router-link>
+
+                <router-link
+                  class="sidelink"
+                  :to="{ name: 'withdrawals' }"
+                  :class="{'router-link-active': withdrawalsLinkActive}"
+                  @click="closeSidebarHandler"
+                >
+                  <span class="flex">
+                    <feather-icon type="list" size="18"/>
+                  </span>
+                  <span class="sidebar-link-title">
+                    {{ $t('Withdrawals History') }}
+                  </span>
+                </router-link>
+
+                <router-link
+                  class="sidelink"
+                  :to="{ name: 'invited-users' }"
+                  :class="{'router-link-active': invitedUsersLinkActive}"
+                  @click="closeSidebarHandler"
+                >
+                      <span class="flex">
+                        <feather-icon type="headphones" size="18"/>
+                      </span>
+                      <span class="sidebar-link-title">
+                        {{ $t('Support staff') }}
+                      </span>
+                </router-link>
+
+                <a
+                  :href="api.documentationUrl"
+                  target="_blank"
+                  class="sidelink"
+                >
+                      <span class="flex">
+                        <feather-icon type="minimize-2" size="18"/>
+                      </span>
+                      <span class="sidelink-link-title">
+                        API
+                      </span>
+                </a>
+              </div>
+
+
+
               <div
-                aria-hidden="true"
-                class="sidelink-expand"
-                :class="{'router-link-active': settingsExpandActive}"
-                @click="expand($event, 'settings')"
+                  aria-hidden="true"
+                  class="sidelink-expand"
+                  :class="{'router-link-active': settingsExpandActive}"
+                  @click="expand($event, 'settings')"
               >
                 <div class="flex items-center gap-4">
                   <feather-icon type="settings" size="18"/>
                   <span class="sidelink-expand-title">
-                  {{ $t('Settings') }}
+                  {{ $t('Root Settings') }}
                 </span>
                 </div>
                 <feather-icon
-                  type="chevron-down"
-                  size="14"
-                  class="sidelink-expand-angle"
-                  :class="{'rotate': fieldCollapsed('settings') }"
+                    type="chevron-down"
+                    size="14"
+                    class="sidelink-expand-angle"
+                    :class="{'rotate': fieldCollapsed('settings') }"
                 />
               </div>
 
@@ -217,43 +280,22 @@
                 <ul class="nav-expand">
                   <li v-if="rootUser" class="nav-expand-item">
                     <router-link
-                      class="sidelink-expand-link"
-                      :to="{ name: 'root-settings' }"
-                      @click="closeSidebarHandler"
+                        class="sidelink-expand-link"
+                        :to="{ name: 'root-settings' }"
+                        @click="closeSidebarHandler"
                     >
                     <span class="sidelink-expand-link-title">
                       {{ $t('Root Settings') }}
                     </span>
                     </router-link>
                   </li>
-                  <li class="nav-expand-item">
-                    <router-link
-                      class="sidelink-expand-link"
-                      :to="{ name: 'rates-and-fees' }"
-                      @click="closeSidebarHandler"
-                    >
-                    <span class="sidelink-expand-link-title">
-                      {{ $t('Rates & Fees') }}
-                    </span>
-                    </router-link>
-                  </li>
-                  <li class="nav-expand-item">
-                    <router-link
-                      class="sidelink-expand-link"
-                      :to="{ name: 'notifications' }"
-                      @click="closeSidebarHandler"
-                    >
-                    <span class="sidelink-expand-link-title">
-                      {{ $t('Notifications') }}
-                    </span>
-                    </router-link>
-                  </li>
+
                   <li v-if="rootUser" class="nav-expand-item">
                     <router-link
-                      class="sidelink-expand-link"
-                      :to="{ name: 'all-users' }"
-                      :class="{'router-link-active': usersLinkActive}"
-                      @click="closeSidebarHandler"
+                        class="sidelink-expand-link"
+                        :to="{ name: 'all-users' }"
+                        :class="{'router-link-active': usersLinkActive}"
+                        @click="closeSidebarHandler"
                     >
                     <span class="sidelink-expand-link-title">
                       {{ $t('Users') }}
@@ -263,66 +305,28 @@
                 </ul>
               </ui-expand>
             </div>
-            <div v-if="showSupportMenu">
-              <div
-                aria-hidden="true"
-                class="sidelink-expand"
-                :class="{'router-link-active': supportExpandActive}"
-                @click="expand($event, 'support')"
-              >
-                <div class="flex items-center gap-4">
-                  <feather-icon type="headphones" size="18"/>
-                  <span class="sidelink-expand-title">
-                  {{ $t('Support') }}
-                </span>
-                </div>
-                <feather-icon
-                  type="chevron-down"
-                  size="14"
-                  class="sidelink-expand-angle"
-                  :class="{'rotate': fieldCollapsed('support') }"
-                />
-              </div>
-
-              <ui-expand :is-expanded="fieldCollapsed('support')">
-                <ul class="nav-expand">
-                  <li v-if="showMainMenu" class="nav-expand-item">
-                    <router-link
-                      class="sidelink-expand-link"
-                      :to="{ name: 'invited-users' }"
-                      :class="{'router-link-active': invitedUsersLinkActive}"
-                      @click="closeSidebarHandler"
-                    >
-                    <span class="sidelink-expand-link-title">
-                      {{ $t('Invited Users') }}
-                    </span>
-                    </router-link>
-                  </li>
-                  <li class="nav-expand-item">
-                    <a
-                      :href="api.documentationUrl"
-                      target="_blank"
-                      class="sidelink-expand-link"
-                    >
-                    <span class="sidelink-expand-link-title">
-                      API
-                    </span>
-                    </a>
-                  </li>
-                </ul>
-              </ui-expand>
-            </div>
           </nav>
-
-        <p class="px-6">{{ $t('Version') }}: {{  version }}</p>
+          <div>
+            <p class="px-6">{{ $t('Frontend') }}: {{ appVersion }}</p>
+            <p class="px-6">{{ $t('Backend') }}: {{ versions.backend.tag }}
+              <span v-if="versions.backend.commitHash">
+                ({{ versions.backend.commitHash }})
+              </span>
+            </p>
+            <p class="px-6">{{ $t('Processing') }}: {{ versions.processing.tag }}
+              <span v-if="versions.processing.commitHash">
+                ({{ versions.processing.commitHash }})
+              </span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
     <div
-      class="backdrop"
-      :class="{'backdrop-show': isShowSidebar}"
-      aria-hidden="true"
-      @click="closeSidebarHandler"
+        class="backdrop"
+        :class="{'backdrop-show': isShowSidebar}"
+        aria-hidden="true"
+        @click="closeSidebarHandler"
     ></div>
   </aside>
 </template>
@@ -357,17 +361,22 @@ export default defineComponent({
 
   computed: {
     storeSettingsLinkActive() {
-      return (['settings'].some((path) => this.$route.path.split('/').indexOf(path) === 3)
-        && ['withdrawal-rules'].some((path) => this.$route.path.split('/').indexOf(path) !== 1))
-      || (
-        ['stores'].some((path) => this.$route.path.split('/').indexOf(path) === 1)
-        && ['create'].some((path) => this.$route.path.split('/').indexOf(path) === 2)
-      );
+      return (['settings'].some((path) => this.$route.path.split('/')
+                  .indexOf(path) === 3)
+              && ['withdrawal-rules'].some((path) => this.$route.path.split('/')
+                  .indexOf(path) !== 1))
+          || (
+              ['stores'].some((path) => this.$route.path.split('/')
+                  .indexOf(path) === 1)
+              && ['create'].some((path) => this.$route.path.split('/')
+                  .indexOf(path) === 2)
+          );
     },
 
     withdrawalsLinkActive() {
       const input = 'withdrawals';
-      return this.$route.path.split('/').find((item) => item === input);
+      return this.$route.path.split('/')
+          .find((item) => item === input);
     },
 
     invoicesLinkActive() {
@@ -381,9 +390,24 @@ export default defineComponent({
       return path === 'monitoring';
     },
 
+    exchangeWithdrawalLinkActive() {
+      const path = this.$route.path.split('/')[1];
+      return path === 'withdrawal/history';
+    },
+
+    supportSearchTxLinkActive() {
+      const path = this.$route.path.split('/')[1];
+      return path === '/support/search-tx';
+    },
+
     withdrawalRulesLinkActive() {
       const path = this.$route.path.split('/')[1];
       return path === 'withdrawal-rules';
+    },
+
+    ratesAndFeesLinkActive() {
+      const path = this.$route.path.split('/')[1];
+      return path === 'rates-and-fees';
     },
 
     usersLinkActive() {
@@ -396,23 +420,13 @@ export default defineComponent({
       return path === 'invited-users';
     },
 
-    historyAndLogs() {
-      const matches = ['monitoring', 'withdrawals'];
-      const path = this.$route.path.split('/')[1];
-      return matches.some((match) => match === path);
-    },
-
     settingsExpandActive() {
-      const matches = ['displaying', 'rates-and-fees', 'notifications', 'all-users'];
+      const matches = ['displaying', 'all-users'];
       const path = this.$route.path.split('/')[1];
       return matches.some((match) => match === path);
     },
 
-    supportExpandActive() {
-      const matches = ['invited-users'];
-      const path = this.$route.path.split('/')[1];
-      return matches.some((match) => match === path);
-    },
+
 
     balancesLinkActive() {
       const path = this.$route.path.split('/')[1];
@@ -427,7 +441,7 @@ export default defineComponent({
 
     showMainMenu() {
       return this.userInfo.email
-        && (this.userRole === 'root' || this.userRole === 'admin');
+          && (this.userRole === 'root' || this.userRole === 'admin');
     },
 
     rootUser() {
@@ -436,9 +450,11 @@ export default defineComponent({
 
     showSupportMenu() {
       return this.userInfo.email
-        && (this.userRole === 'root' || this.userRole === 'admin' || this.userRole === 'support');
+          && (this.userRole === 'root' || this.userRole === 'admin' || this.userRole === 'support');
     },
-
+    appVersion() {
+      return import.meta.env.APP_VERSION;
+    },
     ...mapGetters('app', ['getNavCollapsed']),
     ...mapGetters('user', {
       userRole: 'userRole',
@@ -448,7 +464,8 @@ export default defineComponent({
     }),
     ...mapState('dictionaries', {
       api: 'api',
-      version: 'version'
+      versions: 'versions',
+      processingVersion: 'processingVersion',
     }),
   },
 
@@ -711,6 +728,7 @@ export default defineComponent({
 .sidelink-expand-angle {
   transition: transform 150ms ease-in-out;
 }
+
 .rotate {
   transform: rotate(-180deg);
 }

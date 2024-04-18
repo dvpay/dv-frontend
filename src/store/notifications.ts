@@ -5,7 +5,7 @@ import NotificationsService from '@/services/NotificationsService';
 import {
   AllNotificationsListType,
   Notification,
-  NotificationTarget,
+  NotificationTarget, ProcessingTelegram,
 } from '@/services/NotificationsService/types';
 
 const toast = useToast();
@@ -28,6 +28,7 @@ interface NotificationsState {
   userNotificationsTargets: NotificationTarget[];
   isNotificationsTargetsLoaded: boolean;
   notificationsLoadTargetsTrigger: number;
+  processingTelegram: ProcessingTelegram;
 }
 
 const state: NotificationsState = {
@@ -48,16 +49,24 @@ const state: NotificationsState = {
   userNotificationsTargets: [],
   isNotificationsTargetsLoaded: false,
   notificationsLoadTargetsTrigger: 0,
+  processingTelegram: {
+    owner: '',
+    deeplink: '',
+    hasChatID: false,
+  },
 };
 
-const getters: GetterTree<NotificationsState, RootState> = {
-};
+const getters: GetterTree<NotificationsState, RootState> = {};
 
 const mutations: MutationTree<NotificationsState> = {
   setAllNotifications(state, value: AllNotificationsListType[]) {
     state.allNotifications.system = value[0].notification;
     state.allNotifications.events = value[1].notification;
     state.allNotifications.reports = value[2].notification;
+  },
+
+  setProcessingTelegram(state, value) {
+    state.processingTelegram = value;
   },
 
   setUserNotifications(state, value: Notification[]) {
@@ -216,6 +225,17 @@ const actions: ActionTree<NotificationsState, RootState> = {
       );
     } catch (e) {
       toast.error(e.message);
+      throw e;
+    }
+  },
+
+  async loadTelegramProcessingLink(context) {
+    try {
+      const { data } = await NotificationsService.processingTelegram(context.rootGetters['auth/accessToken']);
+      const { result } = data;
+      context.commit('setProcessingTelegram', result);
+    } catch (e) {
+      console.error(e.message);
       throw e;
     }
   },

@@ -7,11 +7,13 @@ import { SettingsResponse } from '@/services/SettingsService/types';
 const toast = useToast();
 
 interface SettingsState {
+  appUrl: string;
   enabledRegistrationAuth: boolean;
   enabledRegistrationNoAuth: boolean;
 }
 
 const state: SettingsState = {
+  appUrl: '',
   enabledRegistrationAuth: true,
   enabledRegistrationNoAuth: true,
 };
@@ -30,6 +32,15 @@ const mutations: MutationTree<SettingsState> = {
   setEnabledRegistrationNoAuth(state, { value }: SettingsResponse) {
     state.enabledRegistrationNoAuth = value;
   },
+  setAppUrl(state, value: SettingsResponse[]) {
+    state.appUrl = value
+      .reduce((acc: string, curr: SettingsResponse) => {
+        if (curr.name === 'app_url') {
+          return curr.value;
+        }
+        return acc;
+      }, import.meta.env.VITE_API_URL);
+  },
 };
 
 const actions: ActionTree<SettingsState, RootState> = {
@@ -40,6 +51,7 @@ const actions: ActionTree<SettingsState, RootState> = {
       );
       const { result } = data;
       context.commit('setEnabledRegistrationAuth', result);
+      context.commit('setAppUrl', result);
     } catch (e) {
       toast.error(e.message);
       throw e;

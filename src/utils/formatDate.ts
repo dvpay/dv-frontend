@@ -5,7 +5,7 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export function formatDate(dateValue: string, format: string, timezoneValue = '', offset = false) {
+export function formatDate(dateValue: string, format: string, timezoneValue = '', offset = false, showHours = true) {
   let date;
 
   if (offset) {
@@ -36,7 +36,11 @@ export function formatDate(dateValue: string, format: string, timezoneValue = ''
 
     sHour = Number(padValue(sHour));
 
-    return `${sMonth}-${sDay}-${sYear} ${sHour}:${sMinute} ${sAMPM}`;
+    if (showHours) {
+      return `${sMonth}-${sDay}-${sYear} ${sHour}:${sMinute} ${sAMPM}`;
+    }
+
+    return `${sMonth}-${sDay}-${sYear}`;
   }
 
   const sDay = padL(date.date());
@@ -45,7 +49,10 @@ export function formatDate(dateValue: string, format: string, timezoneValue = ''
   const sHour = padL(date.hour());
   const sMinute = padL(date.minute());
 
-  return `${sDay}.${sMonth}.${sYear} ${sHour}:${sMinute}`;
+  if (showHours) {
+    return `${sDay}.${sMonth}.${sYear} ${sHour}:${sMinute}`;
+  }
+  return `${sDay}.${sMonth}.${sYear}`;
 }
 
 function padValue(value: number): string | number {

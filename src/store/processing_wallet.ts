@@ -92,6 +92,17 @@ const actions: ActionTree<ProcessingWalletState, RootState> = {
       throw e;
     }
   },
+  async updateTransferType(context, payload) {
+    try {
+      const { data } = await ProcessingWalletService.updateProcessingTransferType(
+        payload,
+        context.rootGetters['auth/accessToken'],
+      );
+    } catch (e) {
+      toast.error(e.message);
+      throw e;
+    }
+  },
 };
 export const processing_wallet: Module<ProcessingWalletState, RootState> = {
   namespaced: true,

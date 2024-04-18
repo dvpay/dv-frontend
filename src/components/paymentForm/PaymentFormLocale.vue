@@ -11,7 +11,9 @@
         :class="{ 'dropdown-menu-item-selected': locale.value === selectedLocale.value }"
         @click="clickHandler(locale.value)"
       >
-        <img :src="icon(`${locale.value}.svg`)" :alt="locale.value">
+        <ui-flag
+          :iso-code="locale.value"
+        />
         <span class="text-sm">
           {{ locale.title }}
         </span>
@@ -23,8 +25,10 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
 import { icon } from '@/utils';
+import UiFlag from '@/components/ui/UiFlag.vue';
 
 export default defineComponent({
+  components: { UiFlag },
   props: {
     localeOptions: {
       type: Array,
@@ -60,12 +64,11 @@ export default defineComponent({
   color: theme('colors.dark-gray');
   padding: 8px;
   position: absolute;
-  right: 0;
-  bottom: 55px;
-  left: auto;
+  top: 44px;
+  left: -28px;
   background: #fff;
   box-shadow: 0 15px 30px rgba(88, 95, 107, 0.18);
-  border-radius: 20px;
+  border-radius: 16px;
 }
 
 .dropdown-menu-item {

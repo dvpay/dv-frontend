@@ -1,14 +1,17 @@
-import { Module, MutationTree, ActionTree, GetterTree } from 'vuex';
+import { ActionTree, GetterTree, Module, MutationTree } from 'vuex';
 import { useToast } from 'vue-toastification';
 import { RootState } from '@/store/types';
 import ExchangesService from '@/services/ExchangesService';
 import {
-  UserExchangesResponse,
-  UserExchangesRequest,
-  WalletsResponse,
   ExchangeDirectionsResponse,
+  ExchangeWithdrawalHistoryResponse,
   UserExchangeDirectionsResponse,
+  UserExchangesRequest,
+  UserExchangesResponse,
+  WalletsResponse,
 } from '@/services/ExchangesService/types';
+import { PaginationResponse } from '@/api/types';
+import { formatDate, numberFormatter } from '@/utils';
 
 const toast = useToast();
 
@@ -23,6 +26,8 @@ interface ExchangesState {
   allExchangeDirectionsSymbols: [];
   userExchangeDirections: UserExchangeDirectionsResponse[];
   coldWallets: [];
+  exchangeWithdrawalHistory: ExchangeWithdrawalHistoryResponse[];
+  pagination: Partial<PaginationResponse>;
 }
 
 const state: ExchangesState = {
@@ -36,11 +41,19 @@ const state: ExchangesState = {
   allExchangeDirectionsSymbols: [],
   userExchangeDirections: [],
   coldWallets: [],
+  exchangeWithdrawalHistory: [],
+  pagination: {},
 };
 
 const getters: GetterTree<ExchangesState, RootState> = {
   isWalletsExist(state) {
     return !!state.depositWallets.length && !!state.withdrawalWallets.length;
+  },
+  getExchangeWithdrawalHistory(state, rooGetters, rootState) {
+    return state.exchangeWithdrawalHistory.map((item) => ({
+      ...item,
+      createdAt: formatDate(item.createdAt, rootState.app.dateFormat, rootState.user.selectedLocation),
+    }));
   },
 };
 
@@ -88,14 +101,31 @@ const mutations: MutationTree<ExchangesState> = {
   setAllExchangeDirectionsSymbols(state, value: []) {
     state.allExchangeDirectionsSymbols = value;
   },
-
   setUserExchangeDirections(state, value: UserExchangeDirectionsResponse[]) {
     state.userExchangeDirections = value;
   },
-
   setColdWallets(state, value: []) {
-    state.coldWallets = value
-  }
+    state.coldWallets = value;
+  },
+  setPagination(state, value: PaginationResponse) {
+    state.pagination = {
+      total: value.total,
+      per_page: value.per_page,
+      current_page: value.current_page,
+    };
+  },
+
+  setExchangeWithdrawalHistory(state, value: ExchangeWithdrawalHistoryResponse[]) {
+    state.exchangeWithdrawalHistory = [...value]
+      .map((item) => {
+        return {
+          ...item,
+          amount: item.amount
+            ? numberFormatter(item.amount)
+            : item.amount,
+        };
+      });
+  },
 };
 
 const actions: ActionTree<ExchangesState, RootState> = {
@@ -229,7 +259,6 @@ const actions: ActionTree<ExchangesState, RootState> = {
     }
   },
 
-
   async loadUserExchangeDirections(context, params) {
     try {
       const { data } = await ExchangesService.getUserExchangeDirections(
@@ -268,7 +297,10 @@ const actions: ActionTree<ExchangesState, RootState> = {
     }
   },
 
-  async updateExchangeSettings(context, { walletId, payload }) {
+  async updateExchangeSettings(context, {
+    walletId,
+    payload,
+  }) {
     try {
       await ExchangesService.updateExchangeSettings(
         walletId,
@@ -285,11 +317,11 @@ const actions: ActionTree<ExchangesState, RootState> = {
     try {
       const { data: { result } } = await ExchangesService.getColdWallets(
         params,
-        context.rootGetters['auth/accessToken']
-      )
-      context.commit('setColdWallets', result)
+        context.rootGetters['auth/accessToken'],
+      );
+      context.commit('setColdWallets', result);
     } catch (e) {
-      toast.error(e.message)
+      toast.error(e.message);
       throw e;
     }
   },
@@ -301,12 +333,15 @@ const actions: ActionTree<ExchangesState, RootState> = {
         context.rootGetters['auth/accessToken'],
       );
     } catch (e) {
-      toast.error(e.message)
+      toast.error(e.message);
       throw e;
     }
   },
 
-  async deleteColdwallet(context, { walletId, payload }) {
+  async deleteColdwallet(context, {
+    walletId,
+    payload,
+  }) {
     try {
       await ExchangesService.deleteColdWallets(
         walletId,
@@ -319,12 +354,41 @@ const actions: ActionTree<ExchangesState, RootState> = {
     }
   },
 
-  async toggleStatus(context,  payload ) {
+  async toggleStatus(context, payload) {
     try {
       await ExchangesService.changeStatus(
         payload,
         context.rootGetters['auth/accessToken'],
       );
+    } catch (e) {
+      toast.error(e.message);
+      throw e;
+    }
+  },
+
+  async changeStatusExchange(context, payload) {
+    try {
+      await ExchangesService.updateStatusExchange(
+        payload,
+        context.rootGetters['auth/accessToken'],
+      );
+      await context.dispatch('user/loadUserInfo', null, { root: true });
+    } catch (e) {
+      toast.error(e.message);
+      throw e;
+    }
+  },
+
+  async loadExchangeColdWalletHistory(context, params) {
+    try {
+      const { data } = await ExchangesService.getWithdrawalFromExchange(params, context.rootGetters['auth/accessToken']);
+      console.log(data);
+      const {
+        result,
+        meta,
+      } = data;
+      context.commit('setPagination', meta);
+      context.commit('setExchangeWithdrawalHistory', result);
     } catch (e) {
       toast.error(e.message);
       throw e;

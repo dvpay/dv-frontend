@@ -9,6 +9,49 @@
             {{ $t('Balances of invoice addresses') }}
           </div>
         </div>
+        <div
+          v-if="hotWalletsSummary.length"
+          class="cards-wrapper"
+        >
+          <table class="w-full">
+            <tbody>
+            <tr class="border-b-8 border-transparent">
+              <th class="text-left">{{ $t('Asset') }}</th>
+              <th>{{ $t('Wallets with balance (Total)') }}</th>
+              <th class="text-left">{{ $t('Balance Sum') }}</th>
+              <th class="text-right">{{ $t('Balance Sum (USD)') }}</th>
+            </tr>
+            <tr
+              v-for="(item, i) in hotWalletsSummary"
+              :key="i"
+            >
+              <td class="text-left">
+                {{item.currencyId.split('.')[0]}}
+              </td>
+              <td class="text-center">
+                {{ item.countWithBalance }} ({{ item.createdCount }})
+              </td>
+              <td>
+                <template v-if="item.currencyId === 'BTC.Bitcoin'">
+                  {{ numberFormatter(item.sumAmount,4) }}
+                </template>
+                <template v-else>
+                  {{ numberFormatter(item.sumAmount,0) }}
+                </template>
+              </td>
+              <td class="text-right">
+                ${{ numberFormatter(item.sumAmountUsd,0) }} <!-- Тут округление математическое-->
+              </td>
+            </tr>
+            <tr class="border-b-8 border-transparent">
+              <th class="text-left">{{ $t('Summary') }}</th>
+              <th>{{ calculateHotWalletsSummarySum('countWithBalance') }} ({{ calculateHotWalletsSummarySum('createdCount') }})</th>
+              <th class="text-left" > --- </th>
+              <th class="text-right">${{ numberFormatter(calculateHotWalletsSummarySum('sumAmountUsd'),0) }}</th>
+            </tr>
+            </tbody>
+          </table>
+        </div>
         <div class="flex gap-6 items-center flex-wrap">
           <div class="flex items-center gap-2 text-sm">
             <span>
@@ -85,12 +128,6 @@
                  <feather-icon type="external-link" size="16"/>
                </a>
              </div>
-            </div>
-            <div
-              class="justify-self-end w-full h-29px flex items-center justify-center text-xs"
-              :class="statusClass(item.state)"
-            >
-              {{ item.state }}
             </div>
           </div>
           <div class="flex justify-between items-center gap-2">
@@ -177,6 +214,7 @@ import UiLoading from '@/components/ui/UiLoading.vue';
 import UiCheckbox from '@/components/ui/UiCheckbox.vue';
 import UiModal from '@/components/ui/UiModal.vue';
 import UiTooltipTd from '@/components/ui/UiTooltipTd.vue';
+import {numberFormatter} from "@/utils";
 
 export default defineComponent({
   components: {
@@ -232,20 +270,6 @@ export default defineComponent({
   },
 
   computed: {
-    statusClass() {
-      return (status: string) => {
-        switch (status) {
-          case 'free':
-            return 'state-free';
-          case 'busy':
-            return 'state-busy';
-          case 'hold':
-            return 'state-hold';
-          default:
-            return 'state-busy';
-        }
-      };
-    },
 
     currencyOptions(): Array<Record<string, string>> {
       return [
@@ -268,6 +292,7 @@ export default defineComponent({
       addressBalances: 'addressBalances',
       pagination: 'addressBalancesPagination',
       isAddressBalancesLoaded: 'isAddressBalancesLoaded',
+      hotWalletsSummary: 'hotWalletsSummary',
     }),
     ...mapState('balances', {
       balances: 'balances',
@@ -291,9 +316,11 @@ export default defineComponent({
       this.loading = true;
     }
     await this.loadAddressBalancesData(this.currentPage, this.perPage);
+    await this.loadHotWalletsSummaryData();
   },
 
   methods: {
+    numberFormatter,
     perPageSelectHandler() {
       this.loading = true;
       this.loadAddressBalancesData(this.currentPage, this.perPage);
@@ -323,6 +350,14 @@ export default defineComponent({
     hideEmptyAddressesHandler() {
       this.loading = true;
       this.loadAddressBalancesData(this.currentPage, this.perPage);
+    },
+
+    async loadHotWalletsSummaryData() {
+      await this.loadHotWalletsSummary();
+    },
+    calculateHotWalletsSummarySum(feild: string):number {
+      const sum = Object.values(this.hotWalletsSummary).reduce((sum, current:any) => sum + current[feild], 0);
+      return Number(sum);
     },
 
     async loadAddressBalancesData(page: string, perPage: string) {
@@ -373,7 +408,7 @@ export default defineComponent({
       }
     },
 
-    ...mapActions('addresses', ['loadAddressBalances', 'transferFromAddress']),
+    ...mapActions('addresses', ['loadAddressBalances', 'transferFromAddress', 'loadHotWalletsSummary']),
     ...mapMutations('stores', ['setStoreFilterBtnLoading']),
     ...mapActions('withdrawal_wallet', ['requestWithdrawalFromAddress']),
   },

@@ -4,7 +4,7 @@ import {
   AddressBalancesResponse,
   TransferFromAddressRequest,
   InvoicesByAddressResponse,
-  DataByAddressResponse, StatsHotWalletResponse,
+  DataByAddressResponse, StatsHotWalletResponse, SummaryHotWalletResponse,
 } from './types';
 
 export default class AddressesService {
@@ -32,5 +32,9 @@ export default class AddressesService {
 
   public static async getStatsHotWallets(blockchain: string, token: Token): Promise<AxiosBaseResponse<StatsHotWalletResponse>> {
     return api.get(`/hot-wallets/${blockchain}/stats`, null, token);
+  }
+
+  public static async getSummaryHotWallets(token: Token): Promise<AxiosBaseResponse<SummaryHotWalletResponse>> {
+    return api.get('/hot-wallets/summary', null, token);
   }
 }

@@ -46,6 +46,7 @@ interface StoresState {
   returnUrls: Partial<ReturnUrl>;
   storeStatus: number;
   staticAddresses: number;
+  minimalPayment: number;
 }
 
 const state: StoresState = {
@@ -71,13 +72,14 @@ const state: StoresState = {
   returnUrls: {},
   storeStatus: 0,
   staticAddresses: 0,
+  minimalPayment: 1,
 };
 
 const getters: GetterTree<StoresState, RootState> = {
   getStoreList(state, rooGetters, rootState) {
     return state.storeList.map((item) => ({
       ...item,
-      createdAt: formatDate(item.createdAt, rootState.app.dateFormat, rootState.user.selectedLocation),
+      createdAt: formatDate(item.createdAt, rootState.app.dateFormat, rootState.user.selectedLocation, false, false),
       invoicesAmount: item.invoicesAmount
         ? numberFormatter(item.invoicesAmount)
         : 0,
@@ -143,6 +145,7 @@ const mutations: MutationTree<StoresState> = {
       acceptPaymentAtActualRate,
       status,
       staticAddresses,
+      minimalPayment,
     } = value;
 
     state.id = id;
@@ -155,6 +158,7 @@ const mutations: MutationTree<StoresState> = {
     state.acceptPaymentAtActualRate = acceptPaymentAtActualRate;
     state.storeStatus = status;
     state.staticAddresses = staticAddresses;
+    state.minimalPayment = minimalPayment;
   },
 
   removeStores(state) {

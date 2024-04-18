@@ -1,44 +1,42 @@
 <template>
-  <div>
-    <div class="title mb-15px flex items-center gap-2 justify-center">
-      <span>{{ $t('Select a network of') }}</span>
+  <div class="title py-16px flex items-center gap-2 justify-center mb-20px">
+    <span>{{ $t('Select a network of') }}</span>
+    <img
+      v-if="selectedCryptocurrency.symbol"
+      class="w-24px"
+      :src="image(`${selectedCryptocurrency.symbol}.svg`)"
+      :alt="selectedCryptocurrency.symbol"
+    >
+  </div>
+  <div class="input-wrapper mb-20px">
+    <label for="search">
+      <feather-icon type="search" size="20" class="search-icon" />
+    </label>
+    <input
+      id="search"
+      class="outline-none h-24px w-full ml-32px"
+      v-model="searchValue"
+      type="text"
+      :placeholder="$t('Search network')"
+    />
+  </div>
+  <div class="flex flex-col gap-15px">
+    <div
+      v-for="(item, i) in searchedNetwork"
+      :key="i"
+      aria-hidden="true"
+      class="network-item"
+      :class="{'network-item-selected': selectedNetwork.blockchain === item.blockchain}"
+      @click="selectHandler(item.blockchain, item.value)"
+    >
       <img
-        v-if="selectedCryptocurrency.symbol"
-        class="w-24px"
+        class="w-32px lg:w-36px"
         :src="image(`${selectedCryptocurrency.symbol}.svg`)"
-        :alt="selectedCryptocurrency.symbol"
+        :alt="item.symbol"
       >
-    </div>
-    <div class="input-wrapper mb-20px">
-      <label for="search">
-        <feather-icon type="search" size="18" class="search-icon" />
-      </label>
-      <input
-        id="search"
-        class="outline-none h-24px w-full text-center"
-        v-model="searchValue"
-        type="text"
-        :placeholder="$t('Search network')"
-      />
-    </div>
-    <div class="flex flex-col gap-15px">
-      <div
-        v-for="(item, i) in searchedNetwork"
-        :key="i"
-        aria-hidden="true"
-        class="network-item"
-        :class="{'network-item-selected': selectedNetwork.blockchain === item.blockchain}"
-        @click="selectHandler(item.blockchain, item.value)"
-      >
-        <img
-          class="w-36px"
-          :src="image(`${selectedCryptocurrency.symbol}.svg`)"
-          :alt="item.symbol"
-        >
-        <span class="text-base">
-          {{ item.title }}
-        </span>
-      </div>
+      <span class="text-base lg:text-xl font-500">
+        {{ item.title }}
+      </span>
     </div>
   </div>
 </template>
@@ -111,10 +109,7 @@ export default defineComponent({
 }
 
 .input-wrapper {
-  @apply relative py-10px px-16px;
-  background: #fff;
-  box-shadow: 0 12px 20px rgba(68, 75, 85, 0.05);
-  border-radius: 100px;
+  @apply relative flex items-center justify-between bg-white rounded-12px border-1 border-gray-300 p-16px;
 }
 
 .search-icon {
@@ -125,20 +120,20 @@ export default defineComponent({
 }
 
 .network-item {
-  @apply flex items-center gap-2 py-10px px-16px cursor-pointer font-600;
-  background: #fff;
-  box-shadow: 0 12px 20px rgba(68, 75, 85, 0.05);
-  border-radius: 48px;
-  transition: all .1s ease;
+  @apply flex items-center gap-2 py-12px lg:py-21px px-16px lg:px-24px cursor-pointer min-h-64px lg:min-h-88px;
+  @apply bg-white border-2 border-gray-400 rounded-16px;
+  transition: all .2s ease;
 
   &:hover {
-    @apply text-white;
-    @apply bg-dark-gray #{!important};
+    @apply border-2 border-blue-300 #{!important}
   }
 }
 
 .network-item-selected {
-  @apply text-white;
-  @apply bg-dark-gray #{!important};
+  @apply border-2 border-blue-300 #{!important}
+}
+
+.cryptocurrency-item-amount {
+  @apply text-16px text-secondary-900;
 }
 </style>

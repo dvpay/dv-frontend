@@ -1,7 +1,7 @@
 <template>
   <div>
     <div v-if="imageUrl" :class="myclass">
-      <img :src="imageUrl" :class="imgclass" />
+      <img :src="imageUrl" crossorigin="anonymous" :class="imgclass" />
     </div>
     <div v-if="download">
       <button @click="onDownloadClick" :class="downloadButton">

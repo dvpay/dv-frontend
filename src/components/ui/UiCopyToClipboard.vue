@@ -40,6 +40,8 @@ export default defineComponent({
     },
   },
 
+  emits: ['copied'],
+
   data() {
     return {
       timer: 0 as unknown as ReturnType<typeof setTimeout>,
@@ -53,6 +55,7 @@ export default defineComponent({
       this.$copyText.toClipboard(this.textToCopy);
       this.hoverText = 'Copied';
       this.check = true;
+      this.$emit('copied');
 
       this.timer = setTimeout(() => {
         this.hoverText = 'Copy to clipboard';

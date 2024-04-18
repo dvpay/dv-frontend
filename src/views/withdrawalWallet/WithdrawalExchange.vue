@@ -168,9 +168,9 @@ export default defineComponent({
         {
           label: 'Actions',
           field: 'actions',
-          textAlign: 'text-right'
-        }
-      ]
+          textAlign: 'text-right',
+        },
+      ],
     };
   },
   computed: {
@@ -178,7 +178,7 @@ export default defineComponent({
       allExchangeDirectionsSymbols: 'allExchangeDirectionsSymbols',
       userExchangeDirections: 'userExchangeDirections',
       withdrawalWallets: 'withdrawalWallets',
-      coldWallets: 'coldWallets'
+      coldWallets: 'coldWallets',
     }),
 
   },
@@ -195,14 +195,14 @@ export default defineComponent({
       'loadColdWallet',
       'storeColdWallet',
       'deleteColdwallet',
-      'toggleStatus'
+      'toggleStatus',
     ]),
 
     async loadData() {
       this.loadWithdrawalWallets({ exchange: 'huobi' });
       this.loadColdWallet({ exchange: 'huobi' });
 
-      await this.loadAllExchangeDirectionsSearch({ exchange: 'huobi' })
+      await this.loadAllExchangeDirectionsSearch({ exchange: 'huobi' });
       await (async () => {
         await this.loadUserExchangeDirections({ exchange: 'huobi' });
         this.selectedDirection = this.userExchangeDirections;

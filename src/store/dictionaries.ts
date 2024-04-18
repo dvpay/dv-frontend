@@ -1,4 +1,4 @@
-import { ActionTree, Module, MutationTree, GetterTree } from 'vuex';
+import { ActionTree, GetterTree, Module, MutationTree } from 'vuex';
 import { useToast } from 'vue-toastification';
 import { RootState } from '@/store/types';
 import DictionariesService from '@/services/DictionariesService';
@@ -36,10 +36,25 @@ interface ExchangeItem {
   slug: string;
 }
 
+interface ProcessingVersion {
+  tag: string,
+  commitHash: string,
+}
+
+interface BackendVersion {
+  tag: string,
+  commitHash: string,
+}
+
+interface Versions {
+  backend: BackendVersion,
+  processing: ProcessingVersion,
+}
+
 export interface ExchangeCurrencies {
   exchange: string;
   slug: string;
-  currencies: Record<string, string[]>
+  currencies: Record<string, string[]>;
 }
 
 interface DictionariesState {
@@ -56,7 +71,7 @@ interface DictionariesState {
   api: Record<string, string>;
   roles: string[];
   chain: string[];
-  version: string;
+  versions: Versions;
 }
 
 const state: DictionariesState = {
@@ -73,12 +88,22 @@ const state: DictionariesState = {
   api: {},
   roles: [],
   chain: [],
-  version: ''
+  versions: {
+    backend: {
+      tag: '',
+      commitHash: '',
+    },
+    processing: {
+      tag: '',
+      commitHash: '',
+    },
+  },
 };
 
 const getters: GetterTree<DictionariesState, RootState> = {
   blockchainsArray(state) {
-    return Object.keys(state.blockchains).sort();
+    return Object.keys(state.blockchains)
+      .sort();
   },
 
   fiatCurrencies(state) {
@@ -157,12 +182,13 @@ const mutations: MutationTree<DictionariesState> = {
   },
 
   setWebhookTypes(state, value: Record<string, string>) {
-    state.webhookTypes = Object.entries(value).map((item) => {
-      return {
-        title: item[1],
-        value: item[0],
-      };
-    });
+    state.webhookTypes = Object.entries(value)
+      .map((item) => {
+        return {
+          title: item[1],
+          value: item[0],
+        };
+      });
   },
 
   setBlockchains(state, value: BlockchainsResult) {
@@ -203,15 +229,15 @@ const mutations: MutationTree<DictionariesState> = {
   setChain(state, value: string[]) {
     state.chain = value;
   },
-  setVersion(state, value: string) {
-    state.version = value
-  }
+  setVersions(state, value: Versions) {
+    state.versions = value;
+  },
 };
 
 const actions: ActionTree<DictionariesState, RootState> = {
   async loadDictionaries(context) {
     try {
-      const { data } = await DictionariesService.getDictionaries();
+      const { data } = await DictionariesService.getDictionaries(context.rootGetters['auth/accessToken']);
       const { result } = data;
       context.commit('setDictionaries', result);
       context.commit('setCurrencies', result.currencies);
@@ -225,7 +251,7 @@ const actions: ActionTree<DictionariesState, RootState> = {
       context.commit('setApi', result.api);
       context.commit('setRoles', result.roles);
       context.commit('setChain', result.chain);
-      context.commit('setVersion', result.version);
+      context.commit('setVersions', result.versions);
     } catch (e) {
       toast.error(e.message);
       throw e;

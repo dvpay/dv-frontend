@@ -33,6 +33,15 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/login-by-token/:token',
+    name: 'login-by-token',
+    component: () => import('@/views/LoginByTokenView.vue'),
+    meta: {
+      middleware: [guest, register],
+      layout: AppLayout.AUTH,
+    },
+  },
+  {
     path: '/register',
     name: 'register',
     component: () => import('@/views/RegisterView.vue'),
@@ -78,7 +87,7 @@ export const routes: Array<RouteRecordRaw> = [
       middleware: [auth, role],
       layout: AppLayout.ADMIN,
       progressBar: true,
-    }
+    },
   },
   {
     path: '/withdrawal/:wallet_id',
@@ -88,7 +97,17 @@ export const routes: Array<RouteRecordRaw> = [
       middleware: [auth, role],
       layout: AppLayout.ADMIN,
       progressBar: true,
-    }
+    },
+  },
+  {
+    path: '/withdrawal/history',
+    name: 'exchange-cold-history',
+    component: () => import('@/views/withdrawalWallet/WithdrawalColdWalletHistoryView.vue'),
+    meta: {
+      middleware: [auth, role],
+      layout: AppLayout.ADMIN,
+      progressBar: true,
+    },
   },
   {
     path: '/withdrawal/exchange-setting',
@@ -98,7 +117,7 @@ export const routes: Array<RouteRecordRaw> = [
       middleware: [auth, role],
       layout: AppLayout.ADMIN,
       progressBar: true,
-    }
+    },
   },
   {
     path: '/withdrawal/exchange-withdrawal',
@@ -108,7 +127,7 @@ export const routes: Array<RouteRecordRaw> = [
       middleware: [auth, role],
       layout: AppLayout.ADMIN,
       progressBar: true,
-    }
+    },
   },
   //old
 

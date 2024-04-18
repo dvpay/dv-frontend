@@ -29,7 +29,7 @@
           :label="$t('Store Website')"
         />
       </div>
-      <div>
+      <div  v-if="false">
         <div class="text-2xl mb-6">
           {{ $t('Payment') }}
         </div>
@@ -80,7 +80,7 @@
         </div>
       </div>
 
-      <div>
+      <div  v-if="false">
         <div class="text-2xl mb-6">
           {{ $t('Address Hold Time') }}
         </div>
@@ -105,7 +105,7 @@
         </div>
       </div>
 
-      <div>
+      <div  v-if="false">
         <div class="text-2xl mb-6">
           {{ $t('Invoice Actual Rate') }}
         </div>
@@ -118,7 +118,30 @@
           </span>
         </div>
       </div>
-
+      <div>
+        <div class="text-2xl mb-6">
+          {{ $t('Minimal payment') }}
+        </div>
+        <div class="form-group">
+          <label
+            for="addressHoldTime"
+            class="self-start flex items-center gap-2"
+          >
+            {{ $t('Minimal payment for send and show on store') }}
+          </label>
+          <div class="flex max-w-180px items-center">
+            <ui-input
+              v-model="storeMinimalPayment"
+              type="float"
+              id="addressHoldTime"
+              class="w-1/2 z-1"
+            />
+            <div class="text-center p-2 border bg-gray-200 rounded-r-sm">
+              USD
+            </div>
+          </div>
+        </div>
+      </div>
       <div>
         <div class="text-2xl mb-6">
           {{ $t('Store Status') }}
@@ -195,6 +218,7 @@ export default defineComponent({
       invoiceExpires: null,
       buttonLoading: false,
       addressHoldTimeValue: '',
+      storeMinimalPayment: 1,
       acceptPaymentAtActualRateValue: false,
       enabledStore: false,
       enabledStaticAddresses: false,
@@ -216,6 +240,7 @@ export default defineComponent({
       acceptPaymentAtActualRate: 'acceptPaymentAtActualRate',
       storeStatus: 'storeStatus',
       staticAddresses: 'staticAddresses',
+      minimalPayment: 'minimalPayment',
     }),
     ...mapGetters('dictionaries', {
       fiatCurrencies: 'fiatCurrencies',
@@ -248,6 +273,7 @@ export default defineComponent({
             acceptPaymentAtActualRate: this.acceptPaymentAtActualRateValue,
             status: this.enabledStore ? 1 : 0,
             staticAddresses: this.enabledStaticAddresses ? 1 : 0,
+            minimalPayment: this.storeMinimalPayment,
           },
         });
         this.buttonLoading = false;
@@ -280,6 +306,7 @@ export default defineComponent({
       this.acceptPaymentAtActualRateValue = this.acceptPaymentAtActualRate;
       this.enabledStore = !!this.storeStatus;
       this.enabledStaticAddresses = !!this.staticAddresses;
+      this.storeMinimalPayment = this.minimalPayment;
     },
 
     ...mapMutations('stores', ['setIsStoreLoading']),

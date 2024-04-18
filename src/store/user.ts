@@ -28,6 +28,7 @@ const state: UserState = {
     permission: {
       storePay: false,
       withdrawal: false,
+      stopExchange: false,
     },
   },
   selectedLocation: '',

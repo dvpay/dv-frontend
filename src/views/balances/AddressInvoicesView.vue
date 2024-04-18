@@ -167,11 +167,11 @@ export default defineComponent({
           field: 'orderId',
           textAlign: 'text-left',
         },
-        {
-          label: 'Status History',
-          field: 'statuses',
-          textAlign: 'text-center',
-        },
+        // {
+        //   label: 'Status History',
+        //   field: 'statuses',
+        //   textAlign: 'text-center',
+        // },
         {
           label: 'Amount',
           field: 'amount',

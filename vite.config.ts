@@ -5,6 +5,7 @@ import WindiCSS from 'vite-plugin-windicss';
 import autoprefixer from 'autoprefixer';
 
 export default defineConfig({
+  base: '/',
   plugins: [
     vue(),
     WindiCSS(),
@@ -21,6 +22,9 @@ export default defineConfig({
       },
     },
   ],
+  define: {
+    'import.meta.env.APP_VERSION': JSON.stringify(process.env.npm_package_version),
+  },
   build: {
     rollupOptions: {
       input: {
@@ -28,17 +32,19 @@ export default defineConfig({
         payment: path.resolve(__dirname, 'checkout.html'),
       },
       output: {
+        //sourcemapBaseUrl: '/',
         assetFileNames: ({ name }) => {
           if (/\.(gif|jpe?g|png|svg)$/.test(name ?? '')) {
-            return 'assets/images/[name]-[hash][extname]';
+            return `assets/images/[name]-${process.env.npm_package_version}[extname]`;
           }
           if (/\.css$/.test(name ?? '')) {
-            return 'assets/css/[name]-[hash][extname]';
+            return `assets/css/[name]-${process.env.npm_package_version}[extname]`;
           }
-          return 'assets/[name]-[hash][extname]';
+          return `assets/[name]-${process.env.npm_package_version}[extname]`;
         },
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        entryFileNames: 'assets/js/[name]-[hash].js',
+
+        chunkFileNames: `assets/js/[name]-${process.env.npm_package_version}.js`,
+        entryFileNames: `assets/js/[name]-${process.env.npm_package_version}.js`,
       },
     },
   },

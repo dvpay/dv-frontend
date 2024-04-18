@@ -4,12 +4,16 @@ import {
   SystemStatusResponse,
   DepositSummaryResponse,
   LastDepositTransactionsResponse,
-  SavedAndExchangedResponse,
+  FinancialStatsResponse,
 } from './types';
 
 export default class DashboardService {
   public static async getSystemStatus(token: Token): Promise<AxiosBaseResponse<SystemStatusResponse>> {
     return api.get('/stores/heartbeat/status', null, token);
+  }
+
+  public static async getFinancialStats(token: Token): Promise<AxiosBaseResponse<FinancialStatsResponse>> {
+    return api.get('/stores/heartbeat/status/financial-stats', null, token);
   }
 
   public static async getDepositSummary(params: Record<string, string | string[]>, token: Token): Promise<AxiosBaseResponse<DepositSummaryResponse>> {
@@ -21,10 +25,6 @@ export default class DashboardService {
     token: Token,
   ): Promise<AxiosBaseResponse<LastDepositTransactionsResponse>> {
     return api.post('/stores/dashboard/deposit/transactions', params, token);
-  }
-
-  public static async getSavedAndExchanged(token: Token): Promise<AxiosBaseResponse<SavedAndExchangedResponse>> {
-    return api.get('/stores/dashboard/economy', null, token);
   }
 
   public static async stopOrStartAllStores(payload: Record<string, boolean>, token: Token): Promise<AxiosBaseResponse<void>> {

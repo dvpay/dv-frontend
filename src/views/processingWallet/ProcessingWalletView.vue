@@ -11,29 +11,36 @@
     <p>
       {{ $t('The bandwidth is all staked') }} - {{ processingWalletByBlockchain.bandwidthLimit }}
     </p>
+    <p>
+      {{ $t('Processing transfer type') }} -
+      <ui-select v-model="processingWalletByBlockchain.transferType"
+                 class="w-500px h-32px"
+                 @change="updateProcessingTransferType"
+                 id="walletType"
+                 :options="transferTypeList" />
+    </p>
   </div>
   <div class="card mb-3" v-if="blockchain == 'tron'">
-    <p>{{ $t('Analysis_1') }} {{ dateSubMount }} по {{ currentDate }} {{ $t('Analysis_2') }}
-      {{ processingStats.avgTransfer }} {{ $t('Analysis_3') }}
-      <span class="font-600">
-        {{ formatAmount(processingStats.avgTransfer * processingStats.avgEnergy) }}
-        {{ $t('Energy_analysis') }},
-        {{ formatAmount(processingStats.avgTransfer * processingStats.avgBandwidth) }}
-        {{ $t('Analysis_4') }}
-        {{ priceOneTransfer * processingStats.avgTransfer }}$
-        {{ $t('per day irrevocably') }}
-      </span>
-    </p>
-    <br>
-    <p>{{ $t('According to our calculations, you need to stake') }}
-      <span class="font-600"> {{ $t('Total') }} {{
-        formatAmount(trxForStaking)
-      }} ТРХ({{ formatAmount(trxForStaking * courseTrx) }}$ {{ $t('freeze') }})
-        {{ $t('on next month') }}.</span></p>
-    <br>
-    <p>{{ $t("If you don't stake, you'll spend") }}
-      {{ priceOneTransfer * processingStats.avgTransfer * 30 }}$
-      {{ $t('per month irrevocably, so staking will pay for itself in 6 months') }}<span class="text-green-500">({{ $t('highly recommended') }})</span></p>
+    <p>{{ $t('Average number of TRON payments per day') }} - <strong>{{ processingStats.avgTransaction }}</strong>,
+      {{ $t('on average, each payment costs') }} 14.3 TRX
+      <strong>({{ formatAmount(avgEnergyForOneTransfer) }} Energy,
+        {{ formatAmount(avgBandwidthForOneTransfer) }} Bandwith).</strong></p>
+    <p>{{ $t('Thus, on average per day you spend') }} {{
+        formatAmount(processingStats.avgTransaction * transferPrice)
+      }} TRX ({{ formatAmount(processingStats.avgTransaction * transferPrice) }} Energy
+      {{ formatAmount(processingStats.avgTransaction * avgBandwidthForOneTransfer) }} Bandwith),
+      {{ $t('which is equal to') }} ${{
+        formatAmount(processingStats.avgTransaction * transferPrice * courseTrx)
+      }}
+      {{ $t('in day') }} ($1 = {{ formatAmount(1 / courseTrx) }} TRX)
+      {{ $t('only on transfer commission') }}.</p>
+    <p>{{ $t('Analysis_5') }}</p>
+
+    <p>{{ $t('At your current payment level you need to stake:') }}
+      ${{ formatAmount(trxForStaking * courseTrx) }}
+      {{ $t('and you will be able to completely avoid paying commissions and save every day') }}
+      ${{ formatAmount(processingStats.avgTransaction * 14.3 * courseTrx) }}, {{ $t('which will fully pay for staking in 33 days!') }} <span
+        class="text-green-500">({{ $t('highly recommended') }})</span></p>
   </div>
   <div class="flex mb-3 gap-6">
     <div class="card">
@@ -85,31 +92,39 @@
       {{ $t('wallets in order to get it all out') }}
     </p>
     <br>
-    <p><span class="font-500">"{{ $t('Instant without staking. Burn TRX') }}"</span> - {{ $t('Required') }}
+    <p><span class="font-500">"{{ $t('Instant without staking. Burn TRX') }}"</span> -
+      {{ $t('Required') }}
       {{ formatAmount(addressStats.addressCount * transferPrice) }} ТРХ
       {{ $t('for instant withdrawal without staking') }}</p>
     <br>
     <p><span class="font-500">"{{ $t('Fast optimal for energy') }}"</span> -
       {{ $t('For instant withdrawal, you need') }}
-      {{ formatAmount(addressStats.addressCount * processingStats.avgEnergy) }}
+      {{ formatAmount(addressStats.addressCount * avgEnergyForOneTransfer) }}
       {{ $t('Energy_analysis') }},
-      {{ formatAmount(addressStats.addressCount * processingStats.avgBandwidth) }} {{ $t('Bandwidth_analysis')}},
+      {{ formatAmount(addressStats.addressCount * avgBandwidthForOneTransfer) }}
+      {{ $t('Bandwidth_analysis') }},
       {{ $t('stake approximately') }}
       {{ formatAmount(calculateStackEnergyForTransfer + calculateStackBandwidthForTransfer) }} ТРХ
     </p>
     <br>
-    <p><span class="font-500">"{{ $t('At the current staking level and number of payments') }}"</span> -
+    <p><span class="font-500">"{{
+        $t('At the current staking level and number of payments')
+      }}"</span> -
       {{ $t('You\'re stuck') }}
-      {{ processingWalletByBlockchain.energyLimit }} {{ $t('Energy_analysis') }}  {{
+      {{ processingWalletByBlockchain.energyLimit }} {{ $t('Energy_analysis') }} {{
         processingWalletByBlockchain.bandwidthLimit
       }}
-     {{ $t('bandwidth, if you keep the same number of daily payments, then everything will be withdrawn behind') }}
+      {{
+        $t('bandwidth, if you keep the same number of daily payments, then everything will be withdrawn behind')
+      }}
       {{ calculateDayForAllTransfer }} {{ $t('days') }}.
     </p>
     <br>
-    <p><span class="font-500">"{{ $t('At the current staking level, without new payments') }}"</span> -
+    <p><span class="font-500">"{{
+        $t('At the current staking level, without new payments')
+      }}"</span> -
       {{ $t('if there will be no new payments, then the balances will be withdrawn for') }}
-      {{ calculateDayWithoutNewTransaction }}  {{ $t('days') }}
+      {{ calculateDayWithoutNewTransaction }} {{ $t('days') }}
     </p>
   </div>
   <ui-skeleton-box
@@ -148,11 +163,12 @@ import UiSkeletonBox from '@/components/ui/UiSkeletonBox.vue';
 import UiTable from '@/components/ui/UiTable.vue';
 import { numberFormatter } from '@/utils';
 import UiInput from '@/components/ui/UiInput.vue';
+import UiSelect from '@/components/ui/UiSelect.vue';
 
 export default defineComponent({
   name: 'ProcessingWalletView',
-  methods: { numberFormatter },
   components: {
+    UiSelect,
     UiInput,
     UiTable,
     UiSkeletonBox,
@@ -160,15 +176,17 @@ export default defineComponent({
   data() {
     return {
       skeletonLoading: false,
-      courseTrx: 0.089,
+      courseTrx: 0.10406,
       priceOneTransfer: 2.4,
-      energyForStake: 16.5,
+      energyForStake: 13.46824,
       bandwidthForStake: 1.05673,
       trxCalc: 1,
-      energyCalc: 16.5,
+      energyCalc: 13.46824,
       bandwidthCalc: 1.05673,
       bandwidthTrx: 1,
       transferPrice: 27,
+      avgEnergyForOneTransfer: 65000,
+      avgBandwidthForOneTransfer: 345,
       tableColumn: [
         {
           label: 'Date',
@@ -201,21 +219,25 @@ export default defineComponent({
     trxBurningEnergy() {
       return this.processingStats.avgEnergy / 2400;
     },
+
+    transferTypeList() {
+      return this.processingWalletByBlockchain.transferTypeList.map((str) => ({ value: str, title: str }));
+    },
     trxForStaking() {
-      return ((this.processingStats.avgEnergy * this.processingStats.avgTransfer) / this.energyForStake) * 1.1;
+      return ((this.avgEnergyForOneTransfer * this.processingStats.avgTransaction) / this.energyForStake) * 1.1;
     },
     calculateStackEnergyForTransfer() {
-      return (this.processingStats.avgEnergy * this.addressStats.addressCount) / this.energyForStake;
+      return (this.avgEnergyForOneTransfer * this.addressStats.addressCount) / this.energyForStake;
     },
     calculateStackBandwidthForTransfer() {
-      return (this.processingStats.avgBandwidth * this.addressStats.addressCount) / this.bandwidthForStake;
+      return (this.avgBandwidthForOneTransfer * this.addressStats.addressCount) / this.bandwidthForStake;
     },
     calculateDayForAllTransfer() {
-      const days = (parseFloat(this.processingWalletByBlockchain.energyLimit) / (this.processingStats.avgEnergy * this.processingStats.avgTransfer)).toFixed(0);
+      const days = (parseFloat(this.processingWalletByBlockchain.energyLimit) / (this.avgEnergyForOneTransfer * this.processingStats.avgTransaction)).toFixed(0);
       return days > 0 ? days : 1;
     },
     calculateDayWithoutNewTransaction() {
-      const days = (parseFloat(this.processingWalletByBlockchain.energyLimit) / (this.addressStats.addressCount * this.processingStats.avgEnergy)).toFixed(0);
+      const days = (parseFloat(this.processingWalletByBlockchain.energyLimit) / (this.addressStats.addressCount * this.avgEnergyForOneTransfer)).toFixed(0);
       return days > 0 ? days : 1;
     },
     dateSubMount() {
@@ -257,7 +279,7 @@ export default defineComponent({
 
   methods: {
     formatAmount(amount: string | number) {
-      return numberFormatter(amount);
+      return numberFormatter(amount, 2);
     },
     async loadProcessingWalletStatData() {
       await this.loadProcessingWalletStat(this.blockchain);
@@ -267,6 +289,13 @@ export default defineComponent({
     },
     async loadAddressesStatsData() {
       await this.loadAddressesStats(this.blockchain);
+    },
+    async updateProcessingTransferType() {
+      await this.updateTransferType({
+        'blockchain': this.blockchain,
+        'type': this.processingWalletByBlockchain.transferType,
+      });
+      this.$toast.success(this.$t('Success'));
     },
     updateEnergyCalc() {
       this.energyCalc = (this.trxCalc * this.energyForStake).toFixed(4);
@@ -280,7 +309,7 @@ export default defineComponent({
     updateBandwidthTrxCalc() {
       this.bandwidthTrx = (this.bandwidthCalc / this.bandwidthForStake).toFixed(4);
     },
-    ...mapActions('processing_wallet', ['loadProcessingWalletStat', 'loadProcessingWalletTransferStatistics']),
+    ...mapActions('processing_wallet', ['loadProcessingWalletStat', 'loadProcessingWalletTransferStatistics', 'updateTransferType']),
     ...mapActions('wallets', ['loadProcessingWallets']),
     ...mapActions('addresses', ['loadAddressesStats']),
 

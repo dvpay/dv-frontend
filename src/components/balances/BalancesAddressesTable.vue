@@ -5,7 +5,7 @@
   >
     <div class="card-title mb-4">
       {{ $t('Balances of invoice addresses') }}
-    </div>
+  </div>
     <ui-table
       :columns="tableColumns"
       :data="allInvoiceAddresses"

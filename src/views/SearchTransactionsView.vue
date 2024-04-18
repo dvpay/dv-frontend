@@ -37,11 +37,15 @@
     <transaction-webhooks class="mt-10" />
     <transaction-invoices class="mt-10" />
   </div>
+  <div v-if="error.message" class="flex justify-center items-center flex-col text-lg">
+    <img width="150" height="150" class="fill-gray-50" src="@/assets/img/help-circle.svg" />
+    {{ error.message }}
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { mapMutations, mapActions } from 'vuex';
+import { mapMutations, mapActions, mapState } from 'vuex';
 import TransactionDetails from '@/components/transactions/TransactionDetails.vue';
 import TransactionInvoice from '@/components/transactions/TransactionInvoice.vue';
 import TransactionWebhooks from '@/components/transactions/TransactionWebhooks.vue';
@@ -74,6 +78,7 @@ export default defineComponent({
     txId() {
       return this.$route.params.tx_id as string;
     },
+    ...mapState('transactions', { error: 'error' }),
   },
 
   watch: {

@@ -5,9 +5,7 @@ import DashboardService from '@/services/DashboardService';
 import {
   SystemStatusResponse,
   DepositSummaryResponse,
-  LastDepositTransactionsResponse,
-  SavedAndExchangedResponse,
-  SavedExchangedRange,
+  LastDepositTransactionsResponse, FinancialStatsResponse,
 } from '@/services/DashboardService/types';
 import { formatDate, decimal, formatDateSummary, shortName, isJson, day, numberFormatter } from '@/utils';
 
@@ -16,23 +14,29 @@ const toast = useToast();
 interface DashboardState {
   systemStatus: SystemStatusResponse[];
   isSystemStatusLoaded: boolean;
+  financialStats: FinancialStatsResponse;
+  isFinancialStatsLoaded: false,
   depositSummary: DepositSummaryResponse[];
   isDepositSummaryLoaded: boolean;
   lastDepositTransactions: LastDepositTransactionsResponse[];
   isLastDepositTransactionsLoaded: boolean;
-  savedAndExchanged: Array<SavedExchangedRange & { actions: string }>
-  isSavedAndExchangedLoaded: boolean;
 }
 
 const state: DashboardState = {
   systemStatus: [],
   isSystemStatusLoaded: false,
+  financialStats: {
+    coldWalletsUsdSum: '0',
+    exchangeWalletsUsdSum: '0',
+    unconfirmedBtcTransactions: '0',
+    lastSuccessfulDepositTransactionTime: '0',
+    lastSuccessfulWithdrawTransactionTime: '0',
+  },
+  isFinancialStatsLoaded: false,
   depositSummary: [],
   isDepositSummaryLoaded: false,
   lastDepositTransactions: [],
   isLastDepositTransactionsLoaded: false,
-  savedAndExchanged: [],
-  isSavedAndExchangedLoaded: false,
 };
 
 const getters: GetterTree<DashboardState, RootState> = {
@@ -67,6 +71,10 @@ const getters: GetterTree<DashboardState, RootState> = {
 const mutations: MutationTree<DashboardState> = {
   setSystemStatus(state, value) {
     state.systemStatus = value;
+  },
+
+  setFinancialStats(state, value) {
+    state.financialStats = value;
   },
 
   setIsSystemStatusLoaded(state, value) {
@@ -104,21 +112,6 @@ const mutations: MutationTree<DashboardState> = {
   setIsLastDepositTransactionsLoaded(state, value) {
     state.isLastDepositTransactionsLoaded = value;
   },
-
-  setSavedAndExchanged(state, value: SavedAndExchangedResponse) {
-    state.savedAndExchanged = Object.entries(value)
-      .map((item) => ({
-        ...item[1] as SavedExchangedRange,
-        actions: item[0],
-        today: { amountUsd: numberFormatter(item[1].today.amountUsd) },
-        yesterday: { amountUsd: numberFormatter(item[1].yesterday.amountUsd) },
-        month: { amountUsd: numberFormatter(item[1].month.amountUsd) },
-      }));
-  },
-
-  setIsSavedAndExchangedLoaded(state, value: boolean) {
-    state.isSavedAndExchangedLoaded = value;
-  },
 };
 
 const actions: ActionTree<DashboardState, RootState> = {
@@ -130,6 +123,20 @@ const actions: ActionTree<DashboardState, RootState> = {
       const { result } = data;
       context.commit('setSystemStatus', result);
       context.commit('setIsSystemStatusLoaded', true);
+    } catch (e) {
+      toast.error(e.message);
+      throw e;
+    }
+  },
+
+  async loadFinancialStats(context) {
+    try {
+      const { data } = await DashboardService.getFinancialStats(
+        context.rootGetters['auth/accessToken'],
+      );
+      const { result } = data;
+      context.commit('setFinancialStats', result);
+      context.commit('setFinancialStatsLoaded', true);
     } catch (e) {
       toast.error(e.message);
       throw e;
@@ -174,21 +181,6 @@ const actions: ActionTree<DashboardState, RootState> = {
       throw e;
     }
   },
-
-  async loadSavedAndExchanged(context) {
-    try {
-      const { data } = await DashboardService.getSavedAndExchanged(
-        context.rootGetters['auth/accessToken'],
-      );
-      const { result } = data;
-      context.commit('setSavedAndExchanged', result);
-      context.commit('setIsSavedAndExchangedLoaded', true);
-    } catch (e) {
-      toast.error(e.message);
-      throw e;
-    }
-  },
-
   async stopOrStartAllStores(context, status) {
     try {
       await DashboardService.stopOrStartAllStores(

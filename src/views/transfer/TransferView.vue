@@ -13,7 +13,10 @@
         <div class="card-title mb-4">
           {{ $t('Address wait transfer') }}
         </div>
-        <ul>
+        <div v-if="!transferEnable">
+            {{ $t('Tranfser Disabled') }}
+        </div>
+        <ul v-else>
           <div v-if="!hotWallets.length">{{ $t('The wallets are empty, there is nothing to withdraw yet') }}</div>
           <ui-table v-else
                     :columns="hotWalletColumns"
@@ -48,7 +51,7 @@
       </div>
 
     </div>
-    <div class="flex gap-6 mb-4">
+    <div class="flex gap-6 mb-4" >
       <transfer-card :title="$t('Running Tasks')"
                      :empty-error="$t('No transfers in progress')"
                      :transfers="transfersInProgress"
@@ -88,6 +91,7 @@ export default defineComponent({
   data() {
     return {
       stockData: null,
+      transferEnable: false,
       hotWallets: [],
       transferComplete: [],
       transferFail: [],
@@ -139,6 +143,7 @@ export default defineComponent({
     onMessageCallback(ev: { data: string; }) {
       const data = JSON.parse(ev.data);
       this.hotWallets = data.hotWallets;
+      this.transferEnable = data.transferEnable;
       this.transferComplete = data.transferComplete;
       this.transferFail = data.transferFail;
       this.transfersInProgress = data.transfersInProgress;

@@ -5,6 +5,7 @@ import { useToast } from 'vue-toastification';
 import WithdrawalWalletService from '@/services/WithdrawalWalletService';
 import ExchangesService from '@/services/ExchangesService';
 import { WalletsResponse } from '@/services/WalletsService/types';
+import {i18n} from "@/plugins";
 
 const toast = useToast();
 
@@ -14,7 +15,7 @@ interface WithdrawalWalletState {
   isWithdrawalWalletsLoaded: boolean;
   depositWallets: WalletsResponse[];
   exchangeConnect: boolean;
-
+  codeSend: boolean;
 }
 
 const state: WithdrawalWalletState = {
@@ -23,6 +24,7 @@ const state: WithdrawalWalletState = {
   isWithdrawalWalletsLoaded: false,
   depositWallets: [],
   exchangeConnect: false,
+  codeSend: false,
 };
 
 const mutations: MutationTree<WithdrawalWalletState> = {
@@ -36,6 +38,10 @@ const mutations: MutationTree<WithdrawalWalletState> = {
 
   setWithdrawalWalletsLoaded(state, value: boolean) {
     state.isWithdrawalWalletsLoaded = value;
+  },
+
+  setCodeSend(state, value) {
+    state.codeSend = value;
   },
 
   setExchangeConnect(state, value: boolean) {
@@ -97,9 +103,26 @@ const actions: ActionTree<WithdrawalWalletState, RootState> = {
     ctx.commit('setDepositWallets', result);
   },
 
-  async updateWithdrawalWalletHandeler(ctx, payload) {
+  async updateWithdrawalWalletHandler(ctx, payload) {
     try {
-      await WithdrawalWalletService.updateWithdrawalWallet(payload.id, payload, ctx.rootGetters['auth/accessToken']);
+      const { data } = await WithdrawalWalletService.updateWithdrawalWallet(payload.id, payload, ctx.rootGetters['auth/accessToken']);
+      const { result } = data;
+      if (result.codeSend) {
+        ctx.commit('setCodeSend', result.codeSend);
+      } else {
+        toast.success(i18n.global.t('Success'));
+      }
+    } catch (e) {
+      toast.error(e.message);
+    }
+  },
+
+  async updateWithdrawalWalletRulesHandler(ctx, payload) {
+    try {
+      const { data } = await WithdrawalWalletService.updateWithdrawalWalletRules(payload.id, payload, ctx.rootGetters['auth/accessToken']);
+      if(data.errors && data.errors.length === 0) {
+        toast.success(i18n.global.t('Success'));
+      }
     } catch (e) {
       toast.error(e.message);
     }

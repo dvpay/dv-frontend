@@ -18,6 +18,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'vuejs-accessibility/form-control-has-label': 'off',
     'vuejs-accessibility/label-has-for': 'off',
+    'vuejs-accessibility/click-events-have-key-events': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
     'import/no-extraneous-dependencies': 'off',
     '@typescript-eslint/no-explicit-any': 'off',

@@ -46,6 +46,7 @@ export default class Api {
     config.headers = {
       ...config.headers,
       'Accept-Language': localStorage.getItem('locale') || 'en',
+      'X-Requested-With': 'XMLHttpRequest',
     };
     return config;
   }

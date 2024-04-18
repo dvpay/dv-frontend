@@ -41,4 +41,8 @@ export default class NotificationsService {
   public static async saveUserNotificationsTargets(payload: NotificationTargetsPayload, token: Token): Promise<AxiosBaseResponse<void>> {
     return api.post('/notifications/targets', payload, token);
   }
+
+  public static async processingTelegram(token: Token): Promise<AxiosBaseResponse<string[]>> {
+    return api.get('/telegram/processing/', null, token);
+  }
 }

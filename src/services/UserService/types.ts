@@ -14,6 +14,7 @@ export interface UserInfoResponse {
   permission: {
     withdrawal: boolean;
     storePay: boolean;
+    stopExchange: boolean;
   }
 }
 

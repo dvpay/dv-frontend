@@ -33,6 +33,21 @@
       <li
         aria-hidden="true"
         class="dropdown-menu-item"
+        @click="closeHandler"
+      >
+        <router-link
+          class="dropdown-menu-link"
+          to="/notifications"
+        >
+          <feather-icon type="bell" size="18" class="dropdown-menu-icon" />
+          <span>
+            {{ $t('Notifications') }}
+          </span>
+        </router-link>
+      </li>
+      <li
+        aria-hidden="true"
+        class="dropdown-menu-item"
         @click="logout"
       >
         <span

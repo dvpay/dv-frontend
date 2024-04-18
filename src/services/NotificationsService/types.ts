@@ -26,3 +26,9 @@ export interface NotificationTarget {
 export interface NotificationTargetsPayload {
   targets: number[];
 }
+
+export interface ProcessingTelegram {
+  owner: string,
+  deeplink: string,
+  hasChatID: boolean
+}

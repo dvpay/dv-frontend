@@ -44,7 +44,7 @@ export interface UserExchangeUserPairs {
   currencyTo: string;
   symbol: string;
   type: string;
-} 
+}
 
 export interface ExchangeColdWalletAddressItem {
   address: string;
@@ -62,4 +62,10 @@ export interface UpdateExchangeSettingsPayload {
   exchangeCurrenciesFrom: string;
   exchangeCurrenciesTo: string;
   exchangeColdWalletAddress: ExchangeColdWalletAddressItem[];
+}
+
+export interface ExchangeWithdrawalHistoryResponse {
+  createdAt: string,
+  address: string,
+  amount: string,
 }

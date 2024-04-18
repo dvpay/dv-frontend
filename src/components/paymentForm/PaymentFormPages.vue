@@ -42,8 +42,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .pages {
-  @apply p-20px bg-s-gray;
-  @apply border-2 border-x-gray rounded-20px;
+  @apply p-20px bg-s-gray border-2 border-x-gray rounded-20px;
 }
 
 .status-case-wrapper {

@@ -1,3 +1,10 @@
+export interface FinancialStatsResponse {
+  coldWalletsUsdSum: string;
+  exchangeWalletsUsdSum: string;
+  unconfirmedBtcTransactions: string;
+  lastSuccessfulDepositTransactionTime: string;
+  lastSuccessfulWithdrawTransactionTime: string;
+}
 export interface SystemStatusResponse {
   name: string;
   status: string;
@@ -28,14 +35,4 @@ export interface LastDepositTransactionsResponse {
   invoiceId: string;
 }
 
-export interface SavedExchangedRange {
-  month: { amountUsd: string },
-  today: { amountUsd: string },
-  yesterday: { amountUsd: string },
-}
 
-export interface SavedAndExchangedResponse {
-  saved: SavedExchangedRange;
-  exchanged: SavedExchangedRange;
-  withdrawn: SavedExchangedRange;
-}

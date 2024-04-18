@@ -12,6 +12,9 @@ interface TransactionsState {
   transactionInvoice: Partial<TxRelatedInvoices>;
   transactionWebhooks: TxRelatedWebhooks[];
   transactionInvoices: TxRelatedInvoices[];
+  error: {
+    message: string;
+  }
 }
 
 const state: TransactionsState = {
@@ -19,6 +22,9 @@ const state: TransactionsState = {
   transactionInvoice: {},
   transactionWebhooks: [],
   transactionInvoices: [],
+  error: {
+    message: '',
+  },
 };
 
 const getters: GetterTree<TransactionsState, RootState> = {
@@ -123,17 +129,23 @@ const mutations: MutationTree<TransactionsState> = {
         };
       });
   },
+  setError(state, value) {
+    state.error.message = value;
+  },
 
   resetData(state) {
     state.transactionDetails = {};
     state.transactionInvoice = {};
     state.transactionWebhooks = [];
     state.transactionInvoices = [];
+    state.error.message = '';
   },
 };
 
 const actions: ActionTree<TransactionsState, RootState> = {
   async searchTransaction(context, transactionId) {
+    context.commit('resetData');
+
     try {
       const { data } = await TransactionsService.searchTransaction(
         transactionId,
@@ -148,6 +160,9 @@ const actions: ActionTree<TransactionsState, RootState> = {
       context.commit('app/setProgressBar', 'stop', { root: true });
       context.commit('resetData');
       toast.error(e.message);
+      if (e.status === 404) {
+        context.commit('setError', transactionId.length < 64 ? 'Payer Address Not Found' : 'Transaction Not Found');
+      }
       throw e;
     }
   },

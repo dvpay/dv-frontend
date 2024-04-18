@@ -12,9 +12,9 @@ export default function auth({ next, to, store }: Context) {
     });
   }
 
-  if (isForbidden) {
+  if (isForbidden && store.getters['auth/isAuth']) {
     return next({
-      name: 'login',
+      name: 'dashboard',
     });
   }
 

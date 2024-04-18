@@ -17,7 +17,7 @@
             <div>
               {{ $t('Subscribe to the telegram bot first') }}
             </div>
-            <telegram-bot />
+            <telegram-bot/>
           </div>
         </ui-expand>
       </div>
@@ -28,6 +28,31 @@
             @switched="switchHandler(2)"
           />
           <span>Email</span>
+        </div>
+      </div>
+      <div class="flex flex-col gap-2">
+        <div class="flex gap-2 items-center" v-if="processingTelegram.hasChatID">
+          <ui-switcher
+            :checked="processingTelegram.hasChatID"
+          />
+          <span>Processing Telegram</span>
+        </div>
+        <div class="flex flex-col gap-2" v-else>
+          <div>
+            {{ $t('Subscribe to the processing telegram bot first') }}
+          </div>
+          <div class="relative">
+            <a
+              class="flex w-35 items-center gap-2 rounded-32px button-secondary pr-4"
+              :href="processingTelegram.deeplink"
+            >
+              <img
+                class="w-32px"
+                src="@/assets/img/icons/telegram.svg" alt="telegram"
+              >
+              {{ $t('Subscribe') }}
+            </a>
+          </div>
         </div>
       </div>
 
@@ -83,6 +108,7 @@ export default defineComponent({
       userNotificationsTargets: 'userNotificationsTargets',
       isNotificationsTargetsLoaded: 'isNotificationsTargetsLoaded',
       notificationsLoadTargetsTrigger: 'notificationsLoadTargetsTrigger',
+      processingTelegram: 'processingTelegram',
     }),
 
     checked() {
@@ -115,6 +141,7 @@ export default defineComponent({
     this.loadNotificationsTargets();
     this.setTargets();
     this.setIsTgBotSubscribed();
+    this.loadTelegramProcessingLink();
   },
 
   methods: {
@@ -122,6 +149,7 @@ export default defineComponent({
       'loadNotificationsTargets',
       'saveUserNotificationsTargets',
       'enableTelegramNotifications',
+      'loadTelegramProcessingLink',
     ]),
     ...mapActions('user', ['loadUserInfo']),
 

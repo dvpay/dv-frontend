@@ -22,18 +22,6 @@
         :columns="tableColumns"
         :data="storeList"
       >
-        <template v-slot:cell-id="{row: item}">
-          <div class="flex items-center justify-center gap-2">
-            <span>{{item.id}}</span>
-            <ui-copy-to-clipboard
-              v-if="item.id"
-              :text-to-copy="item.id"
-            />
-          </div>
-        </template>
-        <template v-slot:cell-invoicesAmount="{row: item}">
-          {{ item.invoicesAmount }} $
-        </template>
         <template v-slot:cell-actions="{row: item}">
           <router-link
             class="cursor-pointer text-primary-500 hover:text-primary-600"
@@ -56,40 +44,28 @@
 import { defineComponent } from 'vue';
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import UiTable from '@/components/ui/UiTable.vue';
-import UiCopyToClipboard from '@/components/ui/UiCopyToClipboard.vue';
 
 export default defineComponent({
   components: {
     UiTable,
-    UiCopyToClipboard,
   },
 
   data() {
     return {
       tableColumns: [
         {
-          label: 'Name',
-          field: 'name',
-          textAlign: 'text-left',
-        },
-        {
           label: 'Created At',
           field: 'createdAt',
           textAlign: 'text-center',
         },
         {
-          label: 'Store Id',
-          field: 'id',
-          textAlign: 'text-center',
+          label: 'Name',
+          field: 'name',
+          textAlign: 'text-left',
         },
         {
           label: 'Payments count',
           field: 'invoicesCount',
-          textAlign: 'text-center',
-        },
-        {
-          label: 'Payments amount',
-          field: 'invoicesAmount',
           textAlign: 'text-center',
         },
         {

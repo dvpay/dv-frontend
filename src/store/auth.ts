@@ -66,6 +66,18 @@ const actions: ActionTree<AuthState, RootState> = {
     }
   },
 
+  async loginUserByToken(context, token: string) {
+    try {
+      context.commit('setAccessToken', token);
+      if (!Object.keys(context.rootState.dictionaries.dictionaries).length) {
+        await context.dispatch('dictionaries/loadDictionaries', null, { root: true });
+      }
+    } catch (e) {
+      toast.error(e.message);
+      throw e;
+    }
+  },
+
   async registerUser(_, payload: RegisterUserRequest) {
     try {
       await AuthService.registerUser(payload);

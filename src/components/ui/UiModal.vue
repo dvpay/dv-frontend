@@ -7,13 +7,15 @@
         class="modal-backdrop"
         @click="closeHandler"
       >
-        <div
-          class="modal-wrapper"
-        >
+        <div class="modal-wrapper">
           <div
             class="modal-content"
+            :class="{
+              'center': alignOnScreen,
+            }"
             role="dialog"
             aria-modal="true"
+            :style="modalStyles"
             @click.stop
           >
             <div class="modal-header">
@@ -35,7 +37,7 @@
             >
               <slot />
             </div>
-            <div class="modal-footer">
+            <div v-if="showFooter" class="modal-footer">
               <slot name="footer">
                 <div class="flex items-center justify-end gap-4">
                   <button
@@ -47,6 +49,7 @@
                   <button
                     class="button button-primary px-3 py-2"
                     :disabled="disabledConfirm"
+                    :hidden="!displayConfirm"
                     @click="confirmHandler"
                   >
                     {{ $t('Confirm') }}
@@ -85,9 +88,35 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    displayConfirm: {
+      type: Boolean,
+      default: true,
+    },
+
+    showFooter: {
+      type: Boolean,
+      default: true,
+    },
+
+    alignOnScreen: {
+      type: Boolean,
+      default: false,
+    },
+
+    exactSize: {
+      type: String,
+    },
   },
 
   emits: ['update:modelValue', 'confirm'],
+
+  computed: {
+    modalStyles() {
+      return {
+        width: this.exactSize ? this.exactSize : '',
+      };
+    },
+  },
 
   methods: {
     closeHandler() {
@@ -113,6 +142,14 @@ export default defineComponent({
 .modal-content {
   @apply bg-white rounded-md overflow-hidden shadow-md m-2 relative;
   width: var(--modal-width);
+
+  &.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+  }
 }
 
 .modal-header {

@@ -1,7 +1,7 @@
 <template>
   <div>
     <router-link
-      to="/"
+      to="/dashboard"
       class="text-2xl text-left whitespace-nowrap flex"
     >
       <span class="text-primary-500">

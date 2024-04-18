@@ -2,8 +2,9 @@ import { Module, MutationTree, ActionTree, GetterTree } from 'vuex';
 import { useToast } from 'vue-toastification';
 import { RootState } from '@/store/types';
 import PayerService from '@/services/PayerService';
-import { PayerResponse, PayerAddress } from '@/services/PayerService/types';
+import { PayerResponse, PayerAddress, PayerTransaction } from '@/services/PayerService/types';
 import Decimal from 'decimal.js-light';
+import { formatDate } from '@/utils';
 
 const toast = useToast();
 
@@ -42,6 +43,8 @@ const state: PayerState = {
       name: '',
       status: 1,
       staticAddress: 1,
+      returnUrl: null,
+      siteUrl: null,
     },
     address: [],
     currency: [],
@@ -68,8 +71,31 @@ const state: PayerState = {
 
 const getters: GetterTree<PayerState, RootState> = {
   selectedPayerAddress(state) {
-    return state.payerAddresses
-      .filter((item) => item.currency === state.selectedCryptocurrencyAndNetwork)[0];
+    return state.payerAddresses.find((item) => item.currency === state.selectedCryptocurrencyAndNetwork);
+  },
+
+  getTransactions(state, rooGetters, rootState): PayerTransaction[] | undefined {
+    const selectedPayerAddress = state.payerAddresses.find((item) => item.currency === state.selectedCryptocurrencyAndNetwork);
+    return selectedPayerAddress?.transactions.map((item) => ({
+      ...item,
+      created_at: formatDate(
+        item.created_at,
+        rootState.app.dateFormat,
+        '',
+      ),
+    }));
+  },
+
+  getUnconfirmedTransactions(state, rooGetters, rootState): PayerTransaction[] | undefined {
+    const selectedPayerAddress = state.payerAddresses.find((item) => item.currency === state.selectedCryptocurrencyAndNetwork);
+    return selectedPayerAddress?.unconfirmedTransactions.map((item) => ({
+      ...item,
+      created_at: formatDate(
+        item.created_at,
+        rootState.app.dateFormat,
+        '',
+      ),
+    }));
   },
 };
 
@@ -84,6 +110,8 @@ const mutations: MutationTree<PayerState> = {
         blockchain: item.blockchain,
         currency: item.currency,
         address: item.address,
+        transactions: item.transactions,
+        unconfirmedTransactions: item.unconfirmedTransactions,
       }));
   },
 
